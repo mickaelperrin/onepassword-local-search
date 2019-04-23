@@ -25,4 +25,5 @@ class OnePassword:
 
     def get(self, uuid, field):
         self._exit_if_no_session()
+        encrypted_item = self.storageService.get_item_by_uuid(uuid)
         print('get')

@@ -5,10 +5,23 @@ import sqlite3
 class StorageService:
 
     app_path: str
-    db: sqlite3.Connection
+    con: sqlite3.Connection
+    cur: sqlite3.Cursor
 
-    def __init__(self, database_path=None):
-        self.db = self.set_database_connexion(database_path)
+    def __init__(self):
+        self.con = self.set_database_connexion()
+        self.cur = self.con.cursor()
+
+    @staticmethod
+    def _dict_factory(cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+
+    def get_item_by_uuid(self, uuid):
+        query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
+        return self.cur.execute(query).fetchone()
 
     @staticmethod
     def guess_database_dir():
@@ -22,9 +35,11 @@ class StorageService:
         else:
             raise Exception('Unable to determine 1Password local database path')
 
-    def set_database_connexion(self, path):
-        if path is None:
-            path = self.guess_database_dir()
+    def set_database_connexion(self):
+        path = self.guess_database_dir()
         if not os_path.isfile(path):
             raise Exception('Database file not found at ' + path)
-        return sqlite3.connect(path)
+        con = sqlite3.connect(path)
+        con.row_factory = self._dict_factory
+        return con
+
