@@ -1,8 +1,12 @@
 import json
 from os import environ, path
+from onepassword_local_search.services.StorageService import StorageService
 
 
 class OnePassword:
+
+    def __init__(self):
+        self.storageService = StorageService()
 
     @staticmethod
     def _exit_if_no_session():
