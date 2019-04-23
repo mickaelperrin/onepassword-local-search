@@ -8,7 +8,7 @@ from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
 
-NAME = 'one password local search'
+NAME = 'onepassword local search'
 DESCRIPTION = 'Simple 1Password CLI to list and decrypt secrets by querying the local sqlite database'
 URL = 'https://github.com/mickaelperrin/onepassword-local-search'
 EMAIL = 'dev@mickaelperrin.fr'
@@ -94,7 +94,7 @@ setup(
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    keywords='bitwarden cli password secrets',
+    keywords='onepassword 1password cli password secrets',
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
@@ -103,7 +103,7 @@ setup(
     # If your package is a single module, use this instead of 'packages':
     # py_modules=['mypackage'],
     entry_points={
-         'console_scripts': ['bw-simple=bitwarden_simple_cli.__main__:start'],
+         'console_scripts': ['op-local=onepassword_local_search.__main__:start'],
     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
