@@ -53,6 +53,9 @@ Details:
 
 ```
 
-
+## Grab session value from ENV
+```
+OP_SESSION_onepassword_local_search=yA25KnTXfIvmPnOoLJ9tst9O37h8Kl2cPowam2d2d1U
+```
 
 
