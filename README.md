@@ -18,7 +18,7 @@ export ONEPASSWORD_LOCAL_DATABASE_PATH="$HOME/Library/Group Containers/2BUA8C4S2
 
 ### Get decrypted valued
 ```
-op-local get UUID
+op-local get UUID [field]
 ```
 ### List items
 ```
