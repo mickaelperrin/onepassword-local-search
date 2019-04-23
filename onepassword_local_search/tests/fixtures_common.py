@@ -23,6 +23,7 @@ def no_op_session(monkeypatch):
 def op_session(monkeypatch):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
+    monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.dirname(__file__))
 
 
 @pytest.fixture
