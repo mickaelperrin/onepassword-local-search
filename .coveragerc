@@ -1,0 +1,6 @@
+[run]
+source =
+    .
+
+omit =
+    onepassword-local-search/__main__.py
