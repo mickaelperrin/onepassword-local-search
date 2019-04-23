@@ -19,7 +19,7 @@ def test_version(cli_version, capsys):
 
 @pytest.fixture
 def cli_get_uuid():
-    return CliSimple('script', 'get', common_data('uuid_test'), 'password')
+    return CliSimple('script', 'get', common_data('item_uuid'), 'password')
 
 
 @pytest.mark.usefixtures("no_op_session")
