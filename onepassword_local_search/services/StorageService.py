@@ -22,10 +22,10 @@ class StorageService:
 
     def get_item_by_uuid(self, uuid):
         query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
-        try:
-            return self.cur.execute(query).fetchone()
-        except:
+        res = self.cur.execute(query).fetchone()
+        if res is None:
             raise ManagedException('Unable to find item with uuid: %s' % uuid)
+        return res
 
     @staticmethod
     def guess_database_dir():
@@ -54,3 +54,7 @@ class StorageService:
     def get_encrypted_symmetric_key(self, account_id=1):
         query = "select enc_sym_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
         return self.cur.execute(query).fetchone()['enc_sym_key']
+
+    def get_account_key(self, account_id):
+        query = "select enc_login from accounts where id=%s" % account_id
+        return self.cur.execute(query).fetchone()['enc_login']

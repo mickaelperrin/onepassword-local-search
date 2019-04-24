@@ -126,6 +126,7 @@ Enter IV (hex or base-64): ENC_SESSION_KEY.iv
 Enter ciphertext (hex or base-64): ENC_SESSION_KEY.data
 ```
 ```
+SYMMETRIC_KEY
 {
   "alg": "A256GCM",
   "ext": true,
@@ -138,3 +139,54 @@ Enter ciphertext (hex or base-64): ENC_SESSION_KEY.data
   "kid": "vhhhcyj7rc3vocnd5o2iksiflm"
 }
 ```
+
+## Get account key
+```
+select enc_login from accounts where id=2
+```
+```
+ENC_ACCOUNT_KEY
+{
+  "iv": "dv8SyfCFwIev2VFZ",
+  "data": "nlNzizsjb3_i0AFKHR2ormWnS5-D7B5PA-aejZkROhEcLeIBQgnRMA1ANWaJJIMdD7ewQYSpPIyuQjwQwBiRZs5x9O1E3vLMOSbRiE7xzqwAGVbED1MT4jAq-Erm3tsjiGau5lPSIwy39pZSvpupkRKOOyMUbnm3Ps8W7SYiIrDqNtcoHowc2hFBKyWmJO45-nEZfMKw-rXwFbDyknYTyg78V2ZiPUH1We6f15LgglAL_Ilc-lvB3-odFL4Cxy4ZOHCCVw2WrM_qiNdRURTeBzJmyK5dUxzclY2AsV7WIeSezfVxczyXIcGS9_GYlbO_yYm-ay3SLrNFqdI82x4lMfARZuahND5iDOOVVgKpfhP0J5G53zeJX_PULWhhaUhnlp4bNN4taSQQupgeehN8b2iMe4pVDrkKkbnNhrfrmu5G9fciFZR961fvU9Deb70DCSifrcMFoQHRI2bjp1lFOVnNG2XtMyXigVdeRggEbp-5274r1Eex6GRYRfaHc7X0x7ABXiDSiSqS6RCCEzhXWS73xPmrCAo__hWiYa-ObGmAdPYSvhtpjxd7MmthoyCvZLI6R7mxodjektpKjTIKBjJaQ7RfrKr1YRo_PAefcmgVFMFcsR7qPfy-J-1GeQc",
+  "enc": "A256GCM",
+  "cty": "b5+jwk+json",
+  "kid": "vhhhcyj7rc3vocnd5o2iksiflm"
+}
+```
+
+## Decrypt account key
+- Script gcm_decrypt.py
+```
+Enter AES-256 key (hex or base-64 encoded): SYMMETRIC_KEY.k
+Enter IV (hex or base-64): ENC_ACCOUNT_KEY.iv 
+Enter ciphertext (hex or base-64): ENC_ACCOUNT_KEY.data
+```
+
+```
+{
+  "email": "dev+onepassword-local-search@dkod.fr",
+  "masterUnlockKey": {
+    "k": "2Zqlkn-ppcrz0RaH3wDUiKwu1YUPj1bRM09R9MEmsrE",
+    "key_ops": [
+      "encrypt",
+      "decrypt"
+    ],
+    "alg": "A256GCM",
+    "ext": true,
+    "kty": "oct",
+    "kid": "mp"
+  },
+  "personalKey": "A3-TF7ENY-6T8PH5-6KBLQ-RXPGF-AMFNJ-3QYAW",
+  "SRPComputedXDictionary": {
+    "hexX": "c8de13fb040d328b6a3d7e3a153b20bec009fe33a2db78753b9666260495d32e",
+    "params": {
+      "method": "SRPg-4096",
+      "iterations": 100000,
+      "alg": "PBES2g-HS256",
+      "salt": "4i9BsL3OqjeRhRzfDtcD6g"
+    }
+  }
+}
+```
+

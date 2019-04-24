@@ -23,6 +23,8 @@ class CryptoService:
         self.sessionPrivateKey = json.loads(self.decrypt('sessionPrivateKey', self.encryptedSessionPrivateKey))
         self.encyptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
         self.symmetricKey = json.loads(self.decrypt('symmetricKey', self.encyptedSymmetricyKey))
+        self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
+        self.accountKey = json.loads(self.decrypt('accountKey', self.encryptedAccountKey))
 
     def _get_session_key(self):
         latest_signin = self.configFileService.get_latest_signin()
@@ -44,6 +46,10 @@ class CryptoService:
         return path
 
     def _get_encrypted_session_file_path(self):
+        if os_environ.get('OP_SESSION_PRIVATE_KEY_FILE'):
+            path = os_environ.get('OP_SESSION_PRIVATE_KEY_FILE')
+            if os_path.isfile(path):
+                return path
         files = glob.glob(os_path.join(self._get_encrypted_session_directory_path(), '.*'))
         return max(files, key=os_path.getctime)
 
@@ -54,6 +60,10 @@ class CryptoService:
     def _get_encrypted_symmetric_key(self):
         account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
         return self.storageService.get_encrypted_symmetric_key(account_id)
+
+    def _get_encrypted_account_key(self):
+        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        return self.storageService.get_account_key(account_id)
 
     def decrypt(self, key_type, cipher: Cipher):
         if key_type == 'sessionPrivateKey':
@@ -66,5 +76,11 @@ class CryptoService:
             return dec_aes_gcm(
                 ct=get_binary_from_string(cipher.data)[:-16],
                 key=get_binary_from_string(self.sessionPrivateKey['encodedMuk']),
+                iv=get_binary_from_string(cipher.iv),
+                tag=get_binary_from_string(cipher.data)[-16:])
+        elif key_type == 'accountKey':
+            return dec_aes_gcm(
+                ct=get_binary_from_string(cipher.data)[:-16],
+                key=get_binary_from_string(self.symmetricKey['k']),
                 iv=get_binary_from_string(cipher.iv),
                 tag=get_binary_from_string(cipher.data)[-16:])
