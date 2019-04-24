@@ -1,5 +1,6 @@
 # 1Password local search
 [![Build Status](https://travis-ci.org/mickaelperrin/onepassword-local-search.svg?branch=master)](https://travis-ci.org/mickaelperrin/onepassword-local-search) 
+[![codecov](https://codecov.io/gh/mickaelperrin/onepassword-local-search/branch/master/graph/badge.svg)](https://codecov.io/gh/mickaelperrin/onepassword-local-search)
 
 > This is an _**unofficial**_ tool focused on listing and decryption of secrets 
 > with increased performance comparing to native op CLI
