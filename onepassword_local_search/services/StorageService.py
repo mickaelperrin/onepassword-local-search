@@ -51,10 +51,14 @@ class StorageService:
         query = "select id from accounts where user_uuid='%s';" % user_uuid
         return self.cur.execute(query).fetchone()['id']
 
-    def get_encrypted_symmetric_key(self, account_id=1):
+    def get_encrypted_symmetric_key(self, account_id):
         query = "select enc_sym_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
         return self.cur.execute(query).fetchone()['enc_sym_key']
 
     def get_account_key(self, account_id):
         query = "select enc_login from accounts where id=%s" % account_id
         return self.cur.execute(query).fetchone()['enc_login']
+
+    def get_encrypted_private_key(self, account_id):
+        query = "select enc_pri_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
+        return self.cur.execute(query).fetchone()['enc_pri_key']

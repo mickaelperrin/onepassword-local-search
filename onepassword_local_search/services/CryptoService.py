@@ -13,7 +13,12 @@ class CryptoService:
     sessionKey: str
     encryptedSessionPrivateKey: Cipher
     encyptedSymmetricyKey: Cipher
+    encryptedAccountKey: Cipher
+    ecnryptedPrivateKey: Cipher
     configFileService: ConfigFileService
+    accountKey: dict
+    symmetricKey: dict
+    privateKey: dict
 
     def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService):
         self.storageService = storage_service
@@ -25,6 +30,8 @@ class CryptoService:
         self.symmetricKey = json.loads(self.decrypt('symmetricKey', self.encyptedSymmetricyKey))
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
         self.accountKey = json.loads(self.decrypt('accountKey', self.encryptedAccountKey))
+        self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
+        self.privateKey = json.loads(self.decrypt('privateKey', self.encryptedPrivateKey))
 
     def _get_session_key(self):
         latest_signin = self.configFileService.get_latest_signin()
@@ -65,6 +72,10 @@ class CryptoService:
         account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
         return self.storageService.get_account_key(account_id)
 
+    def _get_encrypted_private_key(self):
+        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        return self.storageService.get_encrypted_private_key(account_id)
+
     def decrypt(self, key_type, cipher: Cipher):
         if key_type == 'sessionPrivateKey':
             return dec_aes_gcm(
@@ -78,7 +89,7 @@ class CryptoService:
                 key=get_binary_from_string(self.sessionPrivateKey['encodedMuk']),
                 iv=get_binary_from_string(cipher.iv),
                 tag=get_binary_from_string(cipher.data)[-16:])
-        elif key_type == 'accountKey':
+        elif key_type == 'accountKey' or key_type == 'privateKey':
             return dec_aes_gcm(
                 ct=get_binary_from_string(cipher.data)[:-16],
                 key=get_binary_from_string(self.symmetricKey['k']),

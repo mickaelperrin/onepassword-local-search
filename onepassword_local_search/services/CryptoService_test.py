@@ -20,3 +20,9 @@ def test_session_keys(crypto_service):
 def test_keyset(crypto_service):
     assert crypto_service.symmetricKey['alg'] == 'A256GCM'
     assert crypto_service.symmetricKey['k'] == 'DTCXfnskB1Sm8QiMA_qCWxwZ4GmWOeyAreSN8c0pRcc'
+
+@pytest.mark.usefixtures("op_session")
+def test_private_key(crypto_service):
+    assert crypto_service.privateKey['alg'] == 'RSA-OAEP'
+    assert crypto_service.privateKey['kid'] == 'vhhhcyj7rc3vocnd5o2iksiflm'
+    assert crypto_service.privateKey['n'] == 'vOAZ3IwHI1bkkD5L_5uGvrtMV6KKjzK55ed02Tbqa5Z9k4tKNiwIMykNzmR3XSsNRRthQE6llIh8AJLCbypGnEuCKWZDYmkW_42dF26VjUQ5WqEdWniypsDBcSFqQzBbbb6yv_gs0FNG5QpsEBRuA5DeFSh86CSW-BY35GaARo1G9zDKoqyEI6vZGGX3gv9Nr0docD1Y8ducwkAPtFX4fhFTiBpvJeAGzlKk6imeknZiC4hDFOFt07_vJqORB4Y1crrixPE5E6xkutzgui3WdXBjL14RPIxgfT3_zwc_3Uyy71Y3Tr99MA-i2iWVpRDj9GS3lXh8m9ABp4O4AnU7YQ'
