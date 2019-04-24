@@ -3,4 +3,4 @@ source =
     .
 
 omit =
-    onepassword-local-search/__main__.py
+    onepassword_local_search/__main__.py
