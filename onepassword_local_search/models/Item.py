@@ -20,9 +20,15 @@ class Item:
         self.encryptedOverview = Cipher(row['overview'])
         self.encryptedDetails = Cipher(row['details'])
 
-    def get(self, field, section=None):
+    def get(self, field=None):
+        if field is None:
+            self.__delattr__('encryptedOverview')
+            self.__delattr__('encryptedDetails')
+            return self.output(self.__dict__)
+
         path = field.split(';;')
         out = None
+
         if field in ['title', 'url']:
             out = self.overview.get(field)
         elif field in ['username', 'password']:

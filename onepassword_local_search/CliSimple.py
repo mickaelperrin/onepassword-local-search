@@ -11,7 +11,7 @@ class CliSimple:
     script_name: str
     uuid: str
 
-    def __init__(self, script_name, action='version', uuid=None, field='password'):
+    def __init__(self, script_name, action='version', uuid=None, field=None):
         self.field = field
         self.uuid = uuid
         self.action = action
