@@ -5,7 +5,7 @@ before_install: pip3 install --upgrade pip && pip3 install -r requirements/dev.t
 install:
   - pip3 install onepassword_local_search
   - pip3 install codecov
-script: pytest --cov-report=xml --cov=onepassword-local-search
+script: pytest --cov-report=xml --cov=onepassword_local_search
 deploy:
   skip_cleanup: true
   provider: pypi
