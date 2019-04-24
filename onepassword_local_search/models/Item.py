@@ -31,21 +31,30 @@ class Item:
 
         if field in ['title', 'url']:
             out = self.overview.get(field)
-        elif field in ['username', 'password']:
-            out = self._get_details_field(field)
-        elif field == 'notesPlain':
+        elif field in ['username', 'password'] and (out is None or out == ''):
             out = self.details.get(field)
-        elif hasattr(self, field):
+            if out is None:
+                out = self._get_details_field(field)
+        elif field == 'notesPlain' and (out is None or out == ''):
+            out = self.details.get(field)
+        elif hasattr(self, field) and (out is None or out == ''):
             out = self.__getattribute__(field)
-        elif path != field:
+        elif len(path) > 1 and (out is None or out == ''):
             for section in self.details.get('sections'):
                 if section['title'] == path[0]:
                     for f in section['fields']:
-                        if f['t'] == path[1]:
+                        if f['t'] == path[1] or f['n'] == path[1]:
                             out = f['v']
                             break
+        if out is None:
+            # Fallback: search fieldName is all sections
+            for section in self.details.get('sections'):
+                for f in section['fields']:
+                    if f['t'] == field or f['n'] == field:
+                        out = f['v']
+                        break
 
-        if not out:
+        if out is None:
             raise ManagedException('Unable to find field %s of item %s ' % (field, self.uuid))
 
         return self.output(out)

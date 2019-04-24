@@ -77,3 +77,102 @@ DETAILS:
 
 ```
 
+## Database
+
+```
+{
+  "id": 14,
+  "uuid": "smeg46sk3agiee4cfinvpf7z4u",
+  "vaultId": 6,
+  "overview": {
+    "url": "",
+    "pbe": 0,
+    "pgrng": false,
+    "title": "Database",
+    "ainfo": "server",
+    "tags": [],
+    "ps": 0
+  },
+  "details": {
+    "fields": [],
+    "notesPlain": "",
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "menu",
+            "n": "database_type",
+            "v": "mysql",
+            "t": "Type"
+          },
+          {
+            "k": "string",
+            "inputTraits": {
+              "keyboard": "URL"
+            },
+            "n": "hostname",
+            "v": "server",
+            "t": "serveur"
+          },
+          {
+            "k": "string",
+            "inputTraits": {
+              "keyboard": "NumberPad"
+            },
+            "n": "port",
+            "v": "Port",
+            "t": "port"
+          },
+          {
+            "k": "string",
+            "inputTraits": {
+              "autocorrection": "no",
+              "autocapitalization": "none"
+            },
+            "n": "database",
+            "v": "database name",
+            "t": "Base de données"
+          },
+          {
+            "k": "string",
+            "inputTraits": {
+              "autocorrection": "no",
+              "autocapitalization": "none"
+            },
+            "n": "username",
+            "v": "username",
+            "t": "Nom d'utilisateur"
+          },
+          {
+            "k": "concealed",
+            "n": "password",
+            "v": "password",
+            "t": "mot de passe"
+          },
+          {
+            "k": "string",
+            "n": "sid",
+            "v": "",
+            "t": "SID"
+          },
+          {
+            "k": "string",
+            "n": "alias",
+            "v": "",
+            "t": "Alias"
+          },
+          {
+            "k": "string",
+            "n": "options",
+            "v": "",
+            "t": "Options de connexion"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
