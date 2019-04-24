@@ -11,6 +11,7 @@ def common_data(item):
     return dict(
         nl='\n',
         item_uuid='e25haqmocd5ifiymorfzwxnzry',
+        login_uuid='zzfmhu2j7ajq55mmpm3ihs3oqy',
         subdomain='onepassword_local_search',
         session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI'
     ).get(item)
