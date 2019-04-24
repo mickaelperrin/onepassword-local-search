@@ -1,7 +1,7 @@
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.models.Cipher import Cipher
-from onepassword_local_search.lib.optestlib import dec_aes_gcm, get_binary_from_string, rsa_decrypt
+from onepassword_local_search.lib.optestlib import aes_decrypt, get_binary_from_string, rsa_decrypt
 from os import environ as os_environ, path as os_path
 from json import loads as json_loads
 from glob import glob as glob_glob
@@ -82,7 +82,7 @@ class CryptoService:
         return self.storageService.get_encrypted_private_key(account_id)
 
     def decrypt(self, key, cipher: Cipher):
-        return dec_aes_gcm(
+        return aes_decrypt(
             ct=get_binary_from_string(cipher.data)[:-16],
             key=get_binary_from_string(key),
             iv=get_binary_from_string(cipher.iv),

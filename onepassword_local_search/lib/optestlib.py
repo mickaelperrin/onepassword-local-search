@@ -1,60 +1,81 @@
 #
-# David Schuetz
-# November 2018
-#
+# From work of David Schuetz and Joël Franusic
 # https://github.com/dschuetz/1password
-#
-# Library of functions called by all the other tools here.
-#
+# https://github.com/jpf/okta-jwks-to-pem
 
-from Cryptodome.Cipher import AES, PKCS1_OAEP
-from Cryptodome.PublicKey import RSA
 from sys import exit as sys_exit
-from base64 import b64decode as base64_b64decode
+from base64 import b64decode as base64_b64decode, urlsafe_b64decode
 from binascii import a2b_hex as binascii_a2b_hex
 from json import loads as json_loads
-from jwkest.jwk import load_jwks
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import GCM
+from cryptography.hazmat.primitives.ciphers.base import Cipher
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicNumbers, RSAPrivateNumbers
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+import six
+import struct
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#
-# basic crypto stuff - wrappers around PyCryptoDome, etc.
-#
-# * encrypt/decrypt AES-GCM with 128-bit GCM tag
-# * encrypt/decrypt AES-CBC with HMAC-SHA256 tag
-# * encrypt/decrypt 1Password "opdata" structure 
-#   * AES-CBC with HS-256 tag
-#
-# All use 256-bit keys
-#
-# Should probably pull RSA stuff out of the other scripts
-# and add them here. 
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-#
-# Decrypt CT with AES-GCM using key and iv
-#   * If iv not provided, one will be created
-#   * Verifies GCM tag 
-#     - if verification fails, program will terminate with error
-#   * Length of GCM tag hard-coded to 16 bytes
-#
-def dec_aes_gcm(ct, key, iv, tag):
-    C = AES.new(key, AES.MODE_GCM, iv, mac_len=16)
-    PT = C.decrypt_and_verify(ct, tag)
+def aes_decrypt(ct, key, iv, tag):
+    cipher = Cipher(AES(key), GCM(iv), default_backend())
+    decryptor = cipher.decryptor()
+    return decryptor.update(ct) + decryptor.finalize_with_tag(tag)
 
-    return PT
+
+def intarr2long(arr):
+    return int(''.join(["%02x" % byte for byte in arr]), 16)
+
+
+def base64_to_long(data):
+    if isinstance(data, six.text_type):
+        data = data.encode("ascii")
+
+    # urlsafe_b64decode will happily convert b64encoded data
+    _d = urlsafe_b64decode(bytes(data) + b'==')
+    return intarr2long(struct.unpack('%sB' % len(_d), _d))
 
 
 def rsa_decrypt(key_raw, ct):
-    jwkj = '{"keys": [%s]}' % key_raw
-    jwk = json_loads(jwkj)
-    jwk = load_jwks(jwkj)[0]
-    RSA_Key = RSA.construct((jwk.n, jwk.e, jwk.d))
-    cipher = PKCS1_OAEP.new(RSA_Key)
-    return cipher.decrypt(get_binary_from_string(ct))
+    jwk = json_loads(key_raw)
+    public_numbers = RSAPublicNumbers(
+        base64_to_long(jwk['e']),
+        base64_to_long(jwk['n'])
+    )
+    private_numbers = RSAPrivateNumbers(
+        base64_to_long(jwk['p']),
+        base64_to_long(jwk['q']),
+        base64_to_long(jwk['d']),
+        base64_to_long(jwk['dp']),
+        base64_to_long(jwk['dq']),
+        base64_to_long(jwk['qi']),
+        public_numbers
+    )
+    private_key = private_numbers.private_key(backend=default_backend())
+
+    pem = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+    decryptor = serialization.load_pem_private_key(
+        pem,
+        password=None,
+        backend=default_backend()
+    )
+    plain = decryptor.decrypt(
+        get_binary_from_string(ct),
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA1()),
+            algorithm=hashes.SHA1(),
+            label=None
+        )
+    )
+    return plain
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Convenience functions for input/output
 #
