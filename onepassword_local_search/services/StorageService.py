@@ -1,13 +1,13 @@
 from os import environ, path as os_path
-import sqlite3
+from sqlite3 import Connection, Cursor, connect as sqlite3_connect
 from onepassword_local_search.exceptions.ManagedException import ManagedException
 
 
 class StorageService:
 
     app_path: str
-    con: sqlite3.Connection
-    cur: sqlite3.Cursor
+    con: Connection
+    cur: Cursor
 
     def __init__(self):
         self.con = self.set_database_connexion()
@@ -43,7 +43,7 @@ class StorageService:
         path = self.guess_database_dir()
         if not os_path.isfile(path):
             raise Exception('Database file not found at ' + path)
-        con = sqlite3.connect(path)
+        con = sqlite3_connect(path)
         con.row_factory = self._dict_factory
         return con
 

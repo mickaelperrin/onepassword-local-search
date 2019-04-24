@@ -7,10 +7,13 @@
 # Library of functions called by all the other tools here.
 #
 
-from Cryptodome.Cipher import AES
+from Cryptodome.Cipher import AES, PKCS1_OAEP
+from Cryptodome.PublicKey import RSA
 from sys import exit as sys_exit
 from base64 import b64decode as base64_b64decode
 from binascii import a2b_hex as binascii_a2b_hex
+from json import loads as json_loads
+from jwkest.jwk import load_jwks
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -40,6 +43,15 @@ def dec_aes_gcm(ct, key, iv, tag):
     PT = C.decrypt_and_verify(ct, tag)
 
     return PT
+
+
+def rsa_decrypt(key_raw, ct):
+    jwkj = '{"keys": [%s]}' % key_raw
+    jwk = json_loads(jwkj)
+    jwk = load_jwks(jwkj)[0]
+    RSA_Key = RSA.construct((jwk.n, jwk.e, jwk.d))
+    cipher = PKCS1_OAEP.new(RSA_Key)
+    return cipher.decrypt(get_binary_from_string(ct))
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  

@@ -1,5 +1,3 @@
-import json
-from os import environ, path
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.models.Item import Item
@@ -22,5 +20,4 @@ class OnePassword:
 
     def get(self, uuid, field):
         encrypted_item = self._get_encrypted_item(uuid)
-        item = self.cryptoService.decrypt_item(encrypted_item)
-        print('get')
+        return self.cryptoService.decrypt_item(encrypted_item)

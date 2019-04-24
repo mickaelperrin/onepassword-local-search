@@ -1,4 +1,4 @@
-import json
+from json import loads as json_loads
 
 
 class Cipher:
@@ -9,7 +9,7 @@ class Cipher:
     enc: str
 
     def __init__(self, json_string):
-        self.json = json.loads(json_string)
+        self.json = json_loads(json_string)
         self.iv = self.json['iv']
         self.data = self.json['data']
         self.enc = self.json['enc']

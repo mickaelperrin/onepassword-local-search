@@ -1,13 +1,10 @@
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.models.Cipher import Cipher
-from onepassword_local_search.lib.optestlib import dec_aes_gcm, get_binary_from_string
+from onepassword_local_search.lib.optestlib import dec_aes_gcm, get_binary_from_string, rsa_decrypt
 from os import environ as os_environ, path as os_path
-from Cryptodome.Cipher import PKCS1_OAEP
-from Cryptodome.PublicKey import RSA
-from jwkest.jwk import RSAKey, load_jwks
-import json
-import glob
+from json import loads as json_loads
+from glob import glob as glob_glob
 
 
 class CryptoService:
@@ -28,17 +25,18 @@ class CryptoService:
     def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService):
         self.storageService = storage_service
         self.configFileService = config_file_service
+
+    def _get_base_keys(self):
         self.sessionKey = self._get_session_key()
         self.encryptedSessionPrivateKey = self._get_encrypted_session_key()
-        self.sessionPrivateKey = json.loads(self.decrypt(self.sessionKey, self.encryptedSessionPrivateKey))
+        self.sessionPrivateKey = json_loads(self.decrypt(self.sessionKey, self.encryptedSessionPrivateKey))
         self.encyptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
-        self.symmetricKey = json.loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encyptedSymmetricyKey))
+        self.symmetricKey = json_loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encyptedSymmetricyKey))
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
-        self.accountKey = json.loads(self.decrypt(self.symmetricKey['k'], self.encryptedAccountKey))
+        self.accountKey = json_loads(self.decrypt(self.symmetricKey['k'], self.encryptedAccountKey))
         self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
         self.privateKeyRaw = self.decrypt(self.symmetricKey['k'], self.encryptedPrivateKey).decode('utf-8')
-        self.privateKey = json.loads(self.privateKeyRaw)
-
+        self.privateKey = json_loads(self.privateKeyRaw)
 
     def _get_session_key(self):
         latest_signin = self.configFileService.get_latest_signin()
@@ -64,7 +62,7 @@ class CryptoService:
             path = os_environ.get('OP_SESSION_PRIVATE_KEY_FILE')
             if os_path.isfile(path):
                 return path
-        files = glob.glob(os_path.join(self._get_encrypted_session_directory_path(), '.*'))
+        files = glob_glob(os_path.join(self._get_encrypted_session_directory_path(), '.*'))
         return max(files, key=os_path.getctime)
 
     def _get_encrypted_session_key(self):
@@ -90,30 +88,29 @@ class CryptoService:
             iv=get_binary_from_string(cipher.iv),
             tag=get_binary_from_string(cipher.data)[-16:])
 
-    def _rsa_decrypt(self, key_raw, ct):
-        jwkj = '{"keys": [%s]}' % key_raw
-        jwk = json.loads(jwkj)
-        jwk = load_jwks(jwkj)[0]
-        RSA_Key = RSA.construct((jwk.n, jwk.e, jwk.d))
-        cipher = PKCS1_OAEP.new(RSA_Key)
-        return cipher.decrypt(get_binary_from_string(ct))
-
     def _get_vault_key(self, vault_id):
+        if not hasattr(self, 'privateKeyRaw') or not self.privateKeyRaw:
+            self._get_base_keys()
         account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
-        encrypted_vault_key = json.loads(self.storageService.get_encrypted_vault_key(vault_id, account_id))
-        return json.loads(self._rsa_decrypt(self.privateKeyRaw, encrypted_vault_key['data']).decode('utf-8'))
+        encrypted_vault_key = json_loads(self.storageService.get_encrypted_vault_key(vault_id, account_id))
+        return json_loads(rsa_decrypt(self.privateKeyRaw, encrypted_vault_key['data']).decode('utf-8'))
 
     def decrypt_item(self, item, part='full'):
-        if not self.vaultKeys.get(item.vaultId):
+        vault_key = None
+        if os_environ.get('VAULT_%s_KEY' % item.vaultId):
+            vault_key = os_environ.get('VAULT_%s_KEY' % item.vaultId)
+        elif not self.vaultKeys.get(item.vaultId):
             self.vaultKeys[item.vaultId] = self._get_vault_key(item.vaultId)
+        if not vault_key:
+            vault_key = self.vaultKeys[item.vaultId]['k']
 
         if part == 'overview':
-            item.overview = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedOverview).decode('utf-8'))
+            item.overview = json_loads(self.decrypt(vault_key, item.encryptedOverview).decode('utf-8'))
         elif part == 'details':
-            item.details = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedDetails).decode('utf-8'))
+            item.details = json_loads(self.decrypt(vault_key, item.encryptedDetails).decode('utf-8'))
         else:
-            item.overview = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedOverview).decode('utf-8'))
-            item.details = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedDetails).decode('utf-8'))
+            item.overview = json_loads(self.decrypt(vault_key, item.encryptedOverview).decode('utf-8'))
+            item.details = json_loads(self.decrypt(vault_key, item.encryptedDetails).decode('utf-8'))
 
         return item
 

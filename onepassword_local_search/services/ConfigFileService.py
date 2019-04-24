@@ -1,5 +1,5 @@
 from os import environ as os_environ, path as os_path
-import json
+from json import load as json_load
 
 
 class ConfigFileService:
@@ -18,7 +18,7 @@ class ConfigFileService:
             print('OnePassword CLI configuration is not present. Ensure you have run op signin')
             exit(1)
         with open(op_config_path) as op_config_file:
-            return json.load(op_config_file)
+            return json_load(op_config_file)
 
     def get_latest_signin(self):
         if hasattr(self, 'latest_signin') and self.latest_signin:
