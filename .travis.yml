@@ -5,6 +5,8 @@ before_install: pip3 install --upgrade pip && pip3 install -r requirements/dev.t
 install:
   - pip3 install .
   - pip3 install codecov
+  - mkdir $HOME/.op
+  - cp ./onepassword_local_search/tests/config $HOME/.op/config
 script: pytest --cov-report=xml --cov=onepassword_local_search
 deploy:
   skip_cleanup: true

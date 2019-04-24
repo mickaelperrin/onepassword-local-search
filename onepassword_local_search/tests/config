@@ -1,0 +1,12 @@
+{
+	"latest_signin": "onepassword_local_search",
+	"accounts": [
+		{
+			"shorthand": "onepassword_local_search",
+			"url": "https://onepassword-local-search.1password.eu",
+			"email": "dev+onepassword-local-search@dkod.fr",
+			"accountKey": "A3-TF7ENY-6T8PH5-6KBLQ-RXPGF-AMFNJ-3QYAW",
+			"userUUID": "2ENM3KNHAVGQRLCAWVSPVHO344"
+		}
+	]
+}
