@@ -6,13 +6,15 @@ class Item:
     id: str
     uuid: str
     vault_id: str
-    overview: Cipher
-    details: Cipher
+    encryptedOverview: Cipher
+    encryptedDetails: Cipher
+    overview: dict
+    details: dict
 
     def __init__(self, row):
         self.id = row['id']
         self.uuid = row['uuid']
         self.vaultId = row['vault_id']
-        self.overview = Cipher(row['overview'])
-        self.details = Cipher(row['details'])
+        self.encryptedOverview = Cipher(row['overview'])
+        self.encryptedDetails = Cipher(row['details'])
 

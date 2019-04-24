@@ -3,6 +3,7 @@ from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.tests.fixtures_common import common_data, op_session, crypto_service
 from onepassword_local_search.services.StorageService import StorageService
+from onepassword_local_search.models.Item import Item
 
 
 
@@ -32,3 +33,9 @@ def test_vault_key(crypto_service):
     vault_key = crypto_service._get_vault_key('6')
     assert vault_key['alg'] == 'A256GCM'
     assert vault_key['k'] == 'CF6mPDqu8Uklk2tfq4Vj5moILWpdxKZycIxQI1VUg1A'
+
+@pytest.mark.usefixtures("op_session")
+def test_vault_key(crypto_service):
+    item = crypto_service.decrypt_item(Item(crypto_service.storageService.get_item_by_uuid(common_data('item_uuid'))))
+    assert item.overview['title'] == 'Software licence'
+    assert item.details['sections'][0]['fields'][1]['v'] == 'License number'

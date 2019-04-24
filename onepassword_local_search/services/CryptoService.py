@@ -30,13 +30,13 @@ class CryptoService:
         self.configFileService = config_file_service
         self.sessionKey = self._get_session_key()
         self.encryptedSessionPrivateKey = self._get_encrypted_session_key()
-        self.sessionPrivateKey = json.loads(self.decrypt('sessionPrivateKey', self.encryptedSessionPrivateKey))
+        self.sessionPrivateKey = json.loads(self.decrypt(self.sessionKey, self.encryptedSessionPrivateKey))
         self.encyptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
-        self.symmetricKey = json.loads(self.decrypt('symmetricKey', self.encyptedSymmetricyKey))
+        self.symmetricKey = json.loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encyptedSymmetricyKey))
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
-        self.accountKey = json.loads(self.decrypt('accountKey', self.encryptedAccountKey))
+        self.accountKey = json.loads(self.decrypt(self.symmetricKey['k'], self.encryptedAccountKey))
         self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
-        self.privateKeyRaw = self.decrypt('privateKey', self.encryptedPrivateKey).decode('utf-8')
+        self.privateKeyRaw = self.decrypt(self.symmetricKey['k'], self.encryptedPrivateKey).decode('utf-8')
         self.privateKey = json.loads(self.privateKeyRaw)
 
 
@@ -83,27 +83,12 @@ class CryptoService:
         account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
         return self.storageService.get_encrypted_private_key(account_id)
 
-    def decrypt(self, key_type, cipher: Cipher):
-        if key_type == 'sessionPrivateKey':
-            return dec_aes_gcm(
-                ct=get_binary_from_string(cipher.data)[:-16],
-                key=get_binary_from_string(self.sessionKey),
-                iv=get_binary_from_string(cipher.iv),
-                tag=get_binary_from_string(cipher.data)[-16:])
-        elif key_type == 'symmetricKey':
-            return dec_aes_gcm(
-                ct=get_binary_from_string(cipher.data)[:-16],
-                key=get_binary_from_string(self.sessionPrivateKey['encodedMuk']),
-                iv=get_binary_from_string(cipher.iv),
-                tag=get_binary_from_string(cipher.data)[-16:])
-        elif key_type == 'accountKey' or key_type == 'privateKey':
-            return dec_aes_gcm(
-                ct=get_binary_from_string(cipher.data)[:-16],
-                key=get_binary_from_string(self.symmetricKey['k']),
-                iv=get_binary_from_string(cipher.iv),
-                tag=get_binary_from_string(cipher.data)[-16:])
-        elif key_type == 'vaultKey':
-            return self._rsa_decrypt()
+    def decrypt(self, key, cipher: Cipher):
+        return dec_aes_gcm(
+            ct=get_binary_from_string(cipher.data)[:-16],
+            key=get_binary_from_string(key),
+            iv=get_binary_from_string(cipher.iv),
+            tag=get_binary_from_string(cipher.data)[-16:])
 
     def _rsa_decrypt(self, key_raw, ct):
         jwkj = '{"keys": [%s]}' % key_raw
@@ -118,11 +103,19 @@ class CryptoService:
         encrypted_vault_key = json.loads(self.storageService.get_encrypted_vault_key(vault_id, account_id))
         return json.loads(self._rsa_decrypt(self.privateKeyRaw, encrypted_vault_key['data']).decode('utf-8'))
 
+    def decrypt_item(self, item, part='full'):
+        if not self.vaultKeys.get(item.vaultId):
+            self.vaultKeys[item.vaultId] = self._get_vault_key(item.vaultId)
 
-    def decryptItem(self, encrypted_item):
-        if not self.vaultKeys.get(encrypted_item.vaultId):
-            self.vaultKeys[encrypted_item.vaultId] = self._get_vault_key(encrypted_item.vaultId)
+        if part == 'overview':
+            item.overview = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedOverview).decode('utf-8'))
+        elif part == 'details':
+            item.details = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedDetails).decode('utf-8'))
+        else:
+            item.overview = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedOverview).decode('utf-8'))
+            item.details = json.loads(self.decrypt(self.vaultKeys[item.vaultId]['k'], item.encryptedDetails).decode('utf-8'))
 
+        return item
 
 
 

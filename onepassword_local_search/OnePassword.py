@@ -17,11 +17,10 @@ class OnePassword:
         self.configFileService = ConfigFileService()
         self.cryptoService = CryptoService(self.storageService, self.configFileService)
 
-
     def _get_encrypted_item(self, uuid):
         return Item(self.storageService.get_item_by_uuid(uuid))
 
     def get(self, uuid, field):
         encrypted_item = self._get_encrypted_item(uuid)
-        self.cryptoService.decryptItem(encrypted_item)
+        item = self.cryptoService.decrypt_item(encrypted_item)
         print('get')
