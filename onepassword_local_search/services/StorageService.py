@@ -62,3 +62,7 @@ class StorageService:
     def get_encrypted_private_key(self, account_id):
         query = "select enc_pri_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
         return self.cur.execute(query).fetchone()['enc_pri_key']
+
+    def get_encrypted_vault_key(self, vault_id, account_id):
+        query = "select enc_vault_key from vault_access where id=%s and account_id=%s;" % (vault_id, account_id)
+        return self.cur.execute(query).fetchone()['enc_vault_key']

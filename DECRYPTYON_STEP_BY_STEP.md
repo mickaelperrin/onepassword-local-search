@@ -3,6 +3,8 @@
 > All credits goes to David Schuetz (@dschuetz)
 > https://darthnull.org/security/2018/11/12/1pass-roundtrip/
 
+Note: scripts refers to https://github.com/dschuetz/1password
+
 ## Search entry with uuid: e25haqmocd5ifiymorfzwxnzry 
 
 ```
@@ -212,7 +214,8 @@ Enter AES-256 key (hex or base-64 encoded): SYMMETRIC_KEY.k
 Enter IV (hex or base-64):  ENC_PRIVATE_KEY.iv
 Enter ciphertext (hex or base-64): ENC_PRIVATE_KEY.data
 ``` 
-````
+```
+PRIVATE_KEY
 {
   "alg": "RSA-OAEP",
   "d": "AmCxuabUgIyblLBolHSHvZEh_b7PzswAJquPazw9hu6EaN__noNHFIYMYLovfZ99B58XxiuBSo-N7FPMpWGtVTKPBkR1leSp2bxtnz_M25wRquUxJ3BSWy6dNs5pahRu27irQ1b5cTNRrsCm_ew0aviC_7YgbauXgBK3SBmFXRH81Cw_5XCXmO-9Y7TIPwAnd2jThkyyiyZ9KwSyD96h8eqkn6LX_dXYRRnzlCcTzg2TYXWvtynl1S6z4vRmUKmYxmRroFrIukto5Wlq6o0F8nQ_KxvMrud8qMkatuKcaE9LpAzqXHnCsXf7E_n4UKgUCtLkTrQFIqRiJVSs7R_rQQ",
@@ -231,4 +234,203 @@ Enter ciphertext (hex or base-64): ENC_PRIVATE_KEY.data
   "kid": "vhhhcyj7rc3vocnd5o2iksiflm"
 }
 
-``
+```
+
+## Get encrypted vault key
+```
+sqlite3 -noheader B5.sqlite "select enc_vault_key from vault_access where id=%6 and account_id=2"
+```
+```
+ENC_VAULT_KEY
+{
+  "enc": "RSA-OAEP",
+  "data": "bJ1wK35sjGu81CWEAAX27iTuCqRWYwjMlu3GmR6Dl91iIchox926f9pueeq2aRpj2IiD0ygGu3BYhd1p9OvszyGIHhNWkRkRR9hfcfp4dYqwXP8cYuICNnmq-MQmXPsG_wdVjSGUCw9taQO40eweHa0NmQi9of_4NWklcoDxiziNTAkpNdc4NCRjZowGfW9hM8As8XEUA327e_x-wk6rzG0hEcQl5R-7ffc-r0CJCWd6mh3rInDm_vTfMS527VFiBc1z0JZzeRCADnPA6ztiA9ep2bHlfnN0yL28ek_hBEb3vPZXxTvsdZPVCkr6xE8BH6Z6_34dpUaMVei0dbpESg",
+  "kid": "vhhhcyj7rc3vocnd5o2iksiflm",
+  "cty": "b5+jwk+json"
+}
+
+```
+
+## Decrypt vault key
+- Script rsa_decrypt.py
+```
+Enter RSA private key (as json, decrypted from keyset): PRIVATE_KEY
+Enter ciphertext (base-64 or hex): ENC_VAULT_KEY.data
+```
+```
+VAULT_KEY
+{
+  "alg": "A256GCM",
+  "ext": true,
+  "k": "CF6mPDqu8Uklk2tfq4Vj5moILWpdxKZycIxQI1VUg1A",
+  "key_ops": [
+    "decrypt",
+    "encrypt"
+  ],
+  "kty": "oct",
+  "kid": "mj45lriuh5pkl4t6ocfyoj73jq"
+}
+```
+
+## Decrypt vault item
+
+### Overview
+```
+Enter AES-256 key (hex or base-64 encoded): VAULT_KEY.k
+Enter IV (hex or base-64): ITEM.overview.iv
+Enter ciphertext (hex or base-64):  ITEM.overview.data
+```
+```
+{
+  "url": "",
+  "pbe": 0,
+  "pgrng": false,
+  "title": "Software licence",
+  "ainfo": "version",
+  "tags": [],
+  "ps": 0
+}
+```
+### Details
+```
+Enter AES-256 key (hex or base-64 encoded): VAULT_KEY.k
+Enter IV (hex or base-64): ITEM.details.iv
+Enter ciphertext (hex or base-64):  ITEM.details.data
+```
+```
+{
+  "fields": [],
+  "notesPlain": "",
+  "sections": [
+    {
+      "name": "",
+      "title": "",
+      "fields": [
+        {
+          "k": "string",
+          "inputTraits": {
+            "keyboard": "NumbersAndPunctuation"
+          },
+          "n": "product_version",
+          "v": "version",
+          "t": "version"
+        },
+        {
+          "k": "string",
+          "a": {
+            "guarded": "yes",
+            "multiline": "yes"
+          },
+          "n": "reg_code",
+          "v": "License number",
+          "t": "clé de licence"
+        }
+      ]
+    },
+    {
+      "name": "customer",
+      "title": "Client",
+      "fields": [
+        {
+          "k": "string",
+          "inputTraits": {
+            "autocapitalization": "Words"
+          },
+          "n": "reg_name",
+          "v": "",
+          "t": "accordée à"
+        },
+        {
+          "k": "email",
+          "inputTraits": {
+            "keyboard": "EmailAddress"
+          },
+          "n": "reg_email",
+          "v": "",
+          "t": "e-mail enregistré"
+        },
+        {
+          "k": "string",
+          "inputTraits": {
+            "autocapitalization": "Words"
+          },
+          "n": "company",
+          "v": "",
+          "t": "Société"
+        }
+      ]
+    },
+    {
+      "name": "publisher",
+      "title": "Éditeur",
+      "fields": [
+        {
+          "k": "URL",
+          "n": "download_link",
+          "v": "",
+          "t": "page de téléchargement"
+        },
+        {
+          "k": "string",
+          "inputTraits": {
+            "autocapitalization": "Words"
+          },
+          "n": "publisher_name",
+          "v": "",
+          "t": "éditeur"
+        },
+        {
+          "k": "URL",
+          "n": "publisher_website",
+          "v": "",
+          "t": "site web"
+        },
+        {
+          "k": "string",
+          "inputTraits": {
+            "keyboard": "NumbersAndPunctuation"
+          },
+          "n": "retail_price",
+          "v": "",
+          "t": "prix public"
+        },
+        {
+          "k": "email",
+          "inputTraits": {
+            "autocapitalization": "EmailAddress"
+          },
+          "n": "support_email",
+          "v": "",
+          "t": "e-mail assistance"
+        }
+      ]
+    },
+    {
+      "name": "order",
+      "title": "Commande",
+      "fields": [
+        {
+          "t": "date d'achat",
+          "k": "date",
+          "n": "order_date"
+        },
+        {
+          "k": "string",
+          "n": "order_number",
+          "v": "",
+          "t": "commande n°"
+        },
+        {
+          "k": "string",
+          "inputTraits": {
+            "keyboard": "NumbersAndPunctuation"
+          },
+          "n": "order_total",
+          "v": "",
+          "t": "total de la commande"
+        }
+      ]
+    }
+  ]
+}
+```

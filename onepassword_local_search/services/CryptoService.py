@@ -3,6 +3,9 @@ from onepassword_local_search.services.ConfigFileService import ConfigFileServic
 from onepassword_local_search.models.Cipher import Cipher
 from onepassword_local_search.lib.optestlib import dec_aes_gcm, get_binary_from_string
 from os import environ as os_environ, path as os_path
+from Cryptodome.Cipher import PKCS1_OAEP
+from Cryptodome.PublicKey import RSA
+from jwkest.jwk import RSAKey, load_jwks
 import json
 import glob
 
@@ -19,6 +22,8 @@ class CryptoService:
     accountKey: dict
     symmetricKey: dict
     privateKey: dict
+    privateKeyRaw: str
+    vaultKeys: dict = {}
 
     def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService):
         self.storageService = storage_service
@@ -31,7 +36,9 @@ class CryptoService:
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
         self.accountKey = json.loads(self.decrypt('accountKey', self.encryptedAccountKey))
         self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
-        self.privateKey = json.loads(self.decrypt('privateKey', self.encryptedPrivateKey))
+        self.privateKeyRaw = self.decrypt('privateKey', self.encryptedPrivateKey).decode('utf-8')
+        self.privateKey = json.loads(self.privateKeyRaw)
+
 
     def _get_session_key(self):
         latest_signin = self.configFileService.get_latest_signin()
@@ -95,3 +102,27 @@ class CryptoService:
                 key=get_binary_from_string(self.symmetricKey['k']),
                 iv=get_binary_from_string(cipher.iv),
                 tag=get_binary_from_string(cipher.data)[-16:])
+        elif key_type == 'vaultKey':
+            return self._rsa_decrypt()
+
+    def _rsa_decrypt(self, key_raw, ct):
+        jwkj = '{"keys": [%s]}' % key_raw
+        jwk = json.loads(jwkj)
+        jwk = load_jwks(jwkj)[0]
+        RSA_Key = RSA.construct((jwk.n, jwk.e, jwk.d))
+        cipher = PKCS1_OAEP.new(RSA_Key)
+        return cipher.decrypt(get_binary_from_string(ct))
+
+    def _get_vault_key(self, vault_id):
+        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        encrypted_vault_key = json.loads(self.storageService.get_encrypted_vault_key(vault_id, account_id))
+        return json.loads(self._rsa_decrypt(self.privateKeyRaw, encrypted_vault_key['data']).decode('utf-8'))
+
+
+    def decryptItem(self, encrypted_item):
+        if not self.vaultKeys.get(encrypted_item.vaultId):
+            self.vaultKeys[encrypted_item.vaultId] = self._get_vault_key(encrypted_item.vaultId)
+
+
+
+

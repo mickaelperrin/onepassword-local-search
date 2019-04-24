@@ -23,4 +23,5 @@ class OnePassword:
 
     def get(self, uuid, field):
         encrypted_item = self._get_encrypted_item(uuid)
+        self.cryptoService.decryptItem(encrypted_item)
         print('get')

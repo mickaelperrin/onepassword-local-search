@@ -12,7 +12,7 @@ class Item:
     def __init__(self, row):
         self.id = row['id']
         self.uuid = row['uuid']
-        self.vault_id = row['vault_id']
+        self.vaultId = row['vault_id']
         self.overview = Cipher(row['overview'])
         self.details = Cipher(row['details'])
 
