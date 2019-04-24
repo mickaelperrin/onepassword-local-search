@@ -21,10 +21,6 @@ export ONEPASSWORD_LOCAL_DATABASE_PATH="$HOME/Library/Group Containers/2BUA8C4S2
 ```
 op-local get UUID [field]
 ```
-### List items
-```
-op-local list
-```
 
 ## Why this project ?
 
