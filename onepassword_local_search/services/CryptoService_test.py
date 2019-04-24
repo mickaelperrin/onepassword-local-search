@@ -15,4 +15,6 @@ def test_session_keys(crypto_service):
     assert type(crypto_service.encryptedSessionPrivateKey).__name__ == 'Cipher'
     assert crypto_service.encryptedSessionPrivateKey.iv == 'oUUfx3o33w5wDS8K'
     assert crypto_service.encryptedSessionPrivateKey.data == 'umdgCCC48wRSBaRMOCoAkgcE6nOerQo52IIF8bO9okCyzCmF5P4pKo-NA-1_V5xN1fEXxKe-J1PQGVaxlFo6B3ezGwQlB7pWjXd6gmZmBBo8H15rqIvwz843TE7pw8DJ_mGBZuGXfH5_O7L36CbiEAhiQnTQezZ2KJ_8KMjdad_H6SHWDCyY93iH8nWA62UPusXL5B1T21lW0k47dvYw1lEgJLWvdXtysY2gMtbCFMuvM6jrGliRVCQRml3q5Jff9-4qsOHt4HMr9Ik2RhK-Uz3vsqreI6HJxRQ9JcbHfUdr7wzFqDT9eiMNUsFz9vp9hCU_LL-SXkZyls05nzZVSxvqOyN-wegx9xenxB1R170wHKjcCM2BVA'
-
+    assert crypto_service.encryptedSessionPrivateKey.enc == 'A256GCM'
+    assert crypto_service.sessionPrivateKey['encodedMuk'] == '2Zqlkn-ppcrz0RaH3wDUiKwu1YUPj1bRM09R9MEmsrE'
+    assert crypto_service.sessionPrivateKey['encodedKey'] == 'LlJdBTkGEhTfZbqfRa-UaJpq3SXjWoGWH1iwSCF3wxM'

@@ -78,4 +78,23 @@ ENC_SESSION_KEY:
 }
 ```
 
+## Decrypt session private key 
 
+- Script gcm_decrypt.py
+
+```
+Enter AES-256 key (hex or base-64 encoded): OP_SESSION_team_dkod
+Enter IV (hex or base-64): ENC_SESSION_KEY.iv 
+Enter ciphertext (hex or base-64): ENC_SESSION_KEY.data
+```
+```
+
+{
+  "rawUrl": "https://onepassword-local-search.1password.eu",
+  "uuid": "T2FDLLJDZRHXBAYZIE3GQ6GU6I",
+  "encodedKey": "LlJdBTkGEhTfZbqfRa-UaJpq3SXjWoGWH1iwSCF3wxM",
+  "encodedMuk": "2Zqlkn-ppcrz0RaH3wDUiKwu1YUPj1bRM09R9MEmsrE",
+  "timeCreated": "2019-04-23T21:37:24.740237541+02:00"
+}
+
+```

@@ -1,5 +1,6 @@
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.models.Cipher import Cipher
+from onepassword_local_search.lib.optestlib import dec_aes_gcm, get_binary_from_string
 from os import environ as os_environ, path as os_path
 import json
 import glob
@@ -17,6 +18,7 @@ class CryptoService:
         self.localConfig = self._get_local_config()
         self.sessionKey = self._get_session_key()
         self.encryptedSessionPrivateKey = self._get_encrypted_session_key()
+        self.sessionPrivateKey = json.loads(self.decrypt('sessionPrivateKey', self.encryptedSessionPrivateKey))
 
     def _get_local_config(self):
         op_config_path = os_path.join(os_environ.get('HOME'), '.op', 'config')
@@ -55,5 +57,10 @@ class CryptoService:
         with open(self._get_encrypted_session_file_path()) as f:
             return Cipher(f.read())
 
-
-
+    def decrypt(self, type, cipher: Cipher):
+        if type == 'sessionPrivateKey':
+            return dec_aes_gcm(
+                ct=get_binary_from_string(cipher.data)[:-16],
+                key=get_binary_from_string(self.sessionKey),
+                iv=get_binary_from_string(cipher.iv),
+                tag=get_binary_from_string(cipher.data)[-16:])

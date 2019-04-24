@@ -1,0 +1,2 @@
+pycryptodomex==3.8.1
+pyjwkest==1.4.0
