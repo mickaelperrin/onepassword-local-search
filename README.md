@@ -52,18 +52,32 @@ Testing is done through `pytest`.
 
 - Master password: `A953n5qDnfWRTCvvTKCm5h4`
 - Secret key: `A3-TF7ENY-6T8PH5-6KBLQ-RXPGF-AMFNJ-3QYAW`
-- Session key: `yA25KnTXfIvmPnOoLJ9tst9O37h8Kl2cPowam2d2d1U`
-- Session file: `$TMP/.6MRlBJgtMRso-DO40ErGMPksF6E`
+- Session key: `azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI`
+- Session file: `$TMP/.Y_efcm4Gd_W4NnRTMeOuSEHPA5w`
 ```
 {
-  "kid": "6MRlBJgtMRso-DO40ErGMPksF6E",
+  "kid": "Y_efcm4Gd_W4NnRTMeOuSEHPA5w",
   "enc": "A256GCM",
   "cty": "b5+jwk+json",
-  "iv": "oUUfx3o33w5wDS8K",
-  "data": "umdgCCC48wRSBaRMOCoAkgcE6nOerQo52IIF8bO9okCyzCmF5P4pKo-NA-1_V5xN1fEXxKe-J1PQGVaxlFo6B3ezGwQlB7pWjXd6gmZmBBo8H15rqIvwz843TE7pw8DJ_mGBZuGXfH5_O7L36CbiEAhiQnTQezZ2KJ_8KMjdad_H6SHWDCyY93iH8nWA62UPusXL5B1T21lW0k47dvYw1lEgJLWvdXtysY2gMtbCFMuvM6jrGliRVCQRml3q5Jff9-4qsOHt4HMr9Ik2RhK-Uz3vsqreI6HJxRQ9JcbHfUdr7wzFqDT9eiMNUsFz9vp9hCU_LL-SXkZyls05nzZVSxvqOyN-wegx9xenxB1R170wHKjcCM2BVA",
-  "accessed": "2019-04-23T21:37:24.984711766+02:00"
+  "iv": "o86o5GT5zK7xh83e",
+  "data": "Fn3jMEhlgsniiwP0wgSUF-HUR2LHEQuIW032Oz25VokclJG9t2Tl8a8KgDHgVwgypO2hQbS_0u2xteDEON4GVV7vf4C_7UmzbWIaz5qN1PXa5_AlnmBmHiRFXoTNEQgqJqxkEDHGnCaNExkw8FenArevjwKwp2Zwr1jIL0m8YVEnROSKg8WEuuOh74EehpkmypBJ-I4PIHe-C80OwqriwK6XK_3dEat6iYzvSYKQK4MwY5eTDSZWoIvaAFs8QHBez8CiaDmzIp1fgNOiYwplf9skc9ZA0cvUc9i0AT3aQa7PBsTHEQ2srgF43sS4eFF6X66QOmsbY4UAy-JjakOmIPkthkkx5dsGIsCUO1whAzIlmnTrNYUFtA",
+  "accessed": "2019-04-24T09:29:10.594185993+02:00"
 }
-
+```
+- Config file:
+```
+{
+	"latest_signin": "onepassword_local_search",
+	"accounts": [
+		{
+			"shorthand": "onepassword_local_search",
+			"url": "https://onepassword-local-search.1password.eu",
+			"email": "dev+onepassword-local-search@dkod.fr",
+			"accountKey": "A3-TF7ENY-6T8PH5-6KBLQ-RXPGF-AMFNJ-3QYAW",
+			"userUUID": "2ENM3KNHAVGQRLCAWVSPVHO344"
+		}
+	]
+}
 ```
 
 

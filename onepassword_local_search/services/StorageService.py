@@ -1,5 +1,6 @@
 from os import environ, path as os_path
 import sqlite3
+from onepassword_local_search.exceptions.ManagedException import ManagedException
 
 
 class StorageService:
@@ -21,7 +22,10 @@ class StorageService:
 
     def get_item_by_uuid(self, uuid):
         query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
-        return self.cur.execute(query).fetchone()
+        try:
+            return self.cur.execute(query).fetchone()
+        except:
+            raise ManagedException('Unable to find item with uuid: %s' % uuid)
 
     @staticmethod
     def guess_database_dir():
@@ -43,3 +47,10 @@ class StorageService:
         con.row_factory = self._dict_factory
         return con
 
+    def get_account_id_from_user_uuid(self, user_uuid):
+        query = "select id from accounts where user_uuid='%s';" % user_uuid
+        return self.cur.execute(query).fetchone()['id']
+
+    def get_encrypted_symmetric_key(self, account_id=1):
+        query = "select enc_sym_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
+        return self.cur.execute(query).fetchone()['enc_sym_key']
