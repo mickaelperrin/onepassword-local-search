@@ -143,8 +143,15 @@ Testing is done through `pytest`.
 ## Acknowledgments
 
 This tool couldn't have been possible without the **awesome** work of David Schuetz. (@dschuetz) https://github.com/dschuetz/1password
-Big thanks alos to Joël Franusic and his work on JWK https://github.com/jpf/okta-jwks-to-pem
-Thanks so much ! 
+
+I would like also to thanks the support team of 1Password and in particular @cohix that helped me a lot to 
+understand the remaining internals of 1Password.
+
+Big thanks also to Joël Franusic and his work on JWK https://github.com/jpf/okta-jwks-to-pem. That helped me to 
+drastically improve the performance of the app.
+
+Thanks so much, everyone ! 
+
 
 ## License
 
