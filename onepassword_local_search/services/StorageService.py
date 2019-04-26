@@ -40,7 +40,7 @@ class StorageService:
             raise Exception('Unable to determine 1Password local database path')
 
     def set_database_connexion(self):
-        path = self.guess_database_dir()
+        path = os_path.expandvars(self.guess_database_dir())
         if not os_path.isfile(path):
             raise Exception('Database file not found at ' + path)
         con = sqlite3_connect(path)
