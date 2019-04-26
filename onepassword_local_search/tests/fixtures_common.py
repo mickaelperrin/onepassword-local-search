@@ -5,6 +5,7 @@ from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from os import path as os_path
 from pytest_mock import mocker
+from json import loads as json_loads
 
 
 def common_data(item):
@@ -18,17 +19,27 @@ def common_data(item):
 
 
 @pytest.fixture
-def no_op_session(monkeypatch):
+def no_op_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     if environ.get('OP_SESSION_' + common_data('subdomain')):
         monkeypatch.delenv('OP_SESSION_' + common_data('subdomain'))
+    mocker.patch.object(ConfigFileService, '_get_local_config')
+    with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
+        config = f.read()
+        f.close()
+    ConfigFileService._get_local_config.return_value = json_loads(config)
 
 
 @pytest.fixture
-def op_session(monkeypatch):
+def op_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
     monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FILE', path.join(path.dirname(__file__), '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'))
+    mocker.patch.object(ConfigFileService, '_get_local_config')
+    with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
+        config = f.read()
+        f.close()
+    ConfigFileService._get_local_config.return_value = json_loads(config)
 
 
 @pytest.fixture
