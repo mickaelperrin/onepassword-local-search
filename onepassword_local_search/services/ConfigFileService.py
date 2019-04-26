@@ -13,7 +13,13 @@ class ConfigFileService:
 
     @staticmethod
     def _get_local_config():
-        op_config_path = os_path.join(os_environ.get('HOME'), '.op', 'config')
+        op_config_path = os_environ.get('ONEPASSWORD_CONFIG_FILE_PATH')
+        if op_config_path:
+            if not os_path.isfile(op_config_path):
+                print('The env varialbe ONEPASSWORD_CONFIG_FILE_PATH speciies a missing file for OnePassword CLI configuration')
+                exit(1)
+        else:
+            op_config_path = os_path.join(os_environ.get('HOME'), '.op', 'config')
         if not os_path.isfile(op_config_path):
             print('OnePassword CLI configuration is not present. Ensure you have run op signin')
             exit(1)
