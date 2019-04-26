@@ -1,7 +1,7 @@
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.models.Cipher import Cipher
-from onepassword_local_search.lib.optestlib import aes_decrypt, get_binary_from_string, rsa_decrypt
+from onepassword_local_search.lib.optestlib import aes_decrypt, get_binary_from_string, rsa_decrypt, determine_session_file_path_from_session_key
 from os import environ as os_environ, path as os_path
 from json import loads as json_loads
 from glob import glob as glob_glob
@@ -62,8 +62,10 @@ class CryptoService:
             path = os_environ.get('OP_SESSION_PRIVATE_KEY_FILE')
             if os_path.isfile(path):
                 return path
-        files = glob_glob(os_path.join(self._get_encrypted_session_directory_path(), '.*'))
-        return max(files, key=os_path.getctime)
+        filepath = os_path.join(self._get_encrypted_session_directory_path(), determine_session_file_path_from_session_key(self.sessionKey))
+        if not os_path.isfile(filepath):
+            raise Exception('Unable to find session file at %s' % filepath)
+        return filepath
 
     def _get_encrypted_session_key(self):
         with open(self._get_encrypted_session_file_path()) as f:

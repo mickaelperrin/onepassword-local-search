@@ -14,7 +14,8 @@ def common_data(item):
         item_uuid='e25haqmocd5ifiymorfzwxnzry',
         login_uuid='zzfmhu2j7ajq55mmpm3ihs3oqy',
         subdomain='onepassword_local_search',
-        session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI'
+        session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI',
+        session_filename='.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'
     ).get(item)
 
 

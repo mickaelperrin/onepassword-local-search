@@ -4,7 +4,7 @@
 # https://github.com/jpf/okta-jwks-to-pem
 
 from sys import exit as sys_exit
-from base64 import b64decode as base64_b64decode, urlsafe_b64decode
+from base64 import b64decode as base64_b64decode, urlsafe_b64decode, b64encode, urlsafe_b64decode, urlsafe_b64encode
 from binascii import a2b_hex as binascii_a2b_hex
 from json import loads as json_loads
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
@@ -120,3 +120,11 @@ def get_binary_from_string(str):
                 print("Unable to decode the input. Enter in hex or base64_")
                 sys_exit(1)
     return bin
+
+
+def determine_session_file_path_from_session_key(session_key):
+    decoded = urlsafe_b64decode(session_key + '==')
+    sha1 = hashes.Hash(hashes.SHA1(), backend=default_backend())
+    sha1.update(decoded)
+    digest = sha1.finalize()
+    return '.' + urlsafe_b64encode(digest).decode('utf-8')[:-1]

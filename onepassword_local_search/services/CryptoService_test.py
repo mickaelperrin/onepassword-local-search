@@ -4,6 +4,7 @@ from onepassword_local_search.services.ConfigFileService import ConfigFileServic
 from onepassword_local_search.tests.fixtures_common import common_data, op_session, crypto_service
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.models.Item import Item
+import os
 
 
 
@@ -42,3 +43,8 @@ def test_vault_key(crypto_service):
     item = crypto_service.decrypt_item(Item(crypto_service.storageService.get_item_by_uuid(common_data('item_uuid'))))
     assert item.overview['title'] == 'Software licence'
     assert item.details['sections'][0]['fields'][1]['v'] == 'License number'
+
+@pytest.mark.usefixtures("op_session")
+def test_get_encrypted_session_file_path(crypto_service, monkeypatch):
+    monkeypatch.delenv('OP_SESSION_PRIVATE_KEY_FILE')
+    assert crypto_service._get_encrypted_session_file_path() == os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests', '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w')
