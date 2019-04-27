@@ -49,10 +49,11 @@ class Item:
         if out is None and self.details.get('sections'):
             # Fallback: search fieldName is all sections
             for section in self.details.get('sections'):
-                for f in section['fields']:
-                    if f['t'] == field or f['n'] == field:
-                        out = f['v']
-                        break
+                if section.get('fields'):
+                    for f in section['fields']:
+                        if f['t'] == field or f['n'] == field:
+                            out = f['v']
+                            break
 
         if strict and out is None:
             raise ManagedException('Unable to find field %s of item %s ' % (field, self.uuid))
@@ -62,9 +63,10 @@ class Item:
         return self.output(out)
 
     def _get_details_field(self, field):
-        for f in self.details.get('fields'):
-            if f['name'] == field:
-                return f['value']
+        if self.details.get('fields'):
+            for f in self.details.get('fields'):
+                if f['name'] == field:
+                    return f['value']
         return None
 
     def output(self, content):

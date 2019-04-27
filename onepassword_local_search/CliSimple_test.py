@@ -47,13 +47,6 @@ def test_get_login_title(capsys):
 
 
 @pytest.mark.usefixtures("op_session")
-def test_get_login_id(capsys):
-    CliSimple('script', 'get', common_data('login_uuid'), 'id').run()
-    std = capsys.readouterr()
-    assert std.out == '8'
-
-
-@pytest.mark.usefixtures("op_session")
 def test_get_login_uuid(capsys):
     CliSimple('script', 'get', common_data('login_uuid'), 'uuid').run()
     std = capsys.readouterr()
@@ -99,31 +92,33 @@ def test_get_login_username(capsys):
 def test_list(capsys):
     CliSimple('script', 'list').run()
     std = capsys.readouterr()
-    assert std.out == '''akvb4bbdequd3z6tuorl44btqm Bienvenue dans 1Password !
+    assert '\n'.join(sorted(std.out.split('\n'))) == '''
 5pwta5jhf5fhj5wzfek4sb22ve Mickaël
-zzfmhu2j7ajq55mmpm3ihs3oqy Connexion
+a53bppwuhi65b2e34g45fjyfwu Email account
+akvb4bbdequd3z6tuorl44btqm Bienvenue dans 1Password !
+e25haqmocd5ifiymorfzwxnzry Software licence
+hujxh3pryngc7du3owbkwwuh3i test
 mvkzp2v2myljdqzxcv5736optu Secure Note
 n3iopimevz3pddels3dgfwyp2a Simple Password
-w2euij3m4zhqa5opftnthe5d4q Server
-a53bppwuhi65b2e34g45fjyfwu Email account
 ngkzmk54qoltpdoseqspma4tba File certificate
 smeg46sk3agiee4cfinvpf7z4u Database
-e25haqmocd5ifiymorfzwxnzry Software licence
-'''
+w2euij3m4zhqa5opftnthe5d4q Server
+zzfmhu2j7ajq55mmpm3ihs3oqy Connexion'''
 
 
 @pytest.mark.usefixtures("op_session")
 def test_list_custom_field(capsys):
     CliSimple('script', 'list', '--format={uuid} {username} {password}').run()
     std = capsys.readouterr()
-    assert std.out == '''akvb4bbdequd3z6tuorl44btqm
+    assert '\n'.join(sorted(std.out.split('\n'))) == '''
 5pwta5jhf5fhj5wzfek4sb22ve
-zzfmhu2j7ajq55mmpm3ihs3oqy username password
+a53bppwuhi65b2e34g45fjyfwu
+akvb4bbdequd3z6tuorl44btqm
+e25haqmocd5ifiymorfzwxnzry
+hujxh3pryngc7du3owbkwwuh3i
 mvkzp2v2myljdqzxcv5736optu
 n3iopimevz3pddels3dgfwyp2a  password
-w2euij3m4zhqa5opftnthe5d4q username password
-a53bppwuhi65b2e34g45fjyfwu
 ngkzmk54qoltpdoseqspma4tba
 smeg46sk3agiee4cfinvpf7z4u username password
-e25haqmocd5ifiymorfzwxnzry
-'''
+w2euij3m4zhqa5opftnthe5d4q username password
+zzfmhu2j7ajq55mmpm3ihs3oqy username password'''
