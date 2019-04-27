@@ -93,3 +93,37 @@ def test_get_login_username(capsys):
     CliSimple('script', 'get', common_data('login_uuid'), 'Section2;;Section2Field2').run()
     std = capsys.readouterr()
     assert std.out == 'Section2Field2Value'
+
+
+@pytest.mark.usefixtures("op_session")
+def test_list(capsys):
+    CliSimple('script', 'list').run()
+    std = capsys.readouterr()
+    assert std.out == '''akvb4bbdequd3z6tuorl44btqm Bienvenue dans 1Password !
+5pwta5jhf5fhj5wzfek4sb22ve Mickaël
+zzfmhu2j7ajq55mmpm3ihs3oqy Connexion
+mvkzp2v2myljdqzxcv5736optu Secure Note
+n3iopimevz3pddels3dgfwyp2a Simple Password
+w2euij3m4zhqa5opftnthe5d4q Server
+a53bppwuhi65b2e34g45fjyfwu Email account
+ngkzmk54qoltpdoseqspma4tba File certificate
+smeg46sk3agiee4cfinvpf7z4u Database
+e25haqmocd5ifiymorfzwxnzry Software licence
+'''
+
+
+@pytest.mark.usefixtures("op_session")
+def test_list_custom_field(capsys):
+    CliSimple('script', 'list', '--format={uuid} {username} {password}').run()
+    std = capsys.readouterr()
+    assert std.out == '''akvb4bbdequd3z6tuorl44btqm
+5pwta5jhf5fhj5wzfek4sb22ve
+zzfmhu2j7ajq55mmpm3ihs3oqy username password
+mvkzp2v2myljdqzxcv5736optu
+n3iopimevz3pddels3dgfwyp2a  password
+w2euij3m4zhqa5opftnthe5d4q username password
+a53bppwuhi65b2e34g45fjyfwu
+ngkzmk54qoltpdoseqspma4tba
+smeg46sk3agiee4cfinvpf7z4u username password
+e25haqmocd5ifiymorfzwxnzry
+'''

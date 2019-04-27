@@ -20,7 +20,7 @@ class Item:
         self.encryptedOverview = Cipher(row['overview'])
         self.encryptedDetails = Cipher(row['details'])
 
-    def get(self, field=None):
+    def get(self, field=None, strict=True):
         if field is None:
             self.__delattr__('encryptedOverview')
             self.__delattr__('encryptedDetails')
@@ -46,7 +46,7 @@ class Item:
                         if f['t'] == path[1] or f['n'] == path[1]:
                             out = f['v']
                             break
-        if out is None:
+        if out is None and self.details.get('sections'):
             # Fallback: search fieldName is all sections
             for section in self.details.get('sections'):
                 for f in section['fields']:
@@ -54,8 +54,10 @@ class Item:
                         out = f['v']
                         break
 
-        if out is None:
+        if strict and out is None:
             raise ManagedException('Unable to find field %s of item %s ' % (field, self.uuid))
+        elif not strict and out is None:
+            return ''
 
         return self.output(out)
 
