@@ -9,14 +9,13 @@
 
 This tool do not replace the official CLI `op` of 1Password. You still need it to perform signin and grab session keys.
 
-First, ensure that you have registered the OP_SESSION_team in your environment.
+So, ensure that you have registered the OP_SESSION_team in your environment.
 
-Set the env variable ONEPASSWORD_LOCAL_DATABASE_PATH with the path of the B5.sqlite database.
+####Database path
 
-Example on my Mac:
-```
-export ONEPASSWORD_LOCAL_DATABASE_PATH="$HOME/Library/Group Containers/2BUA8C4S2C.com.agilebits/Library/Application Support/1Password/Data/B5.sqlite"
-```
+The script will try to search the database at standard path depending on your platform. It it fails or if you want
+to use another database, you could set the env variable ONEPASSWORD_LOCAL_DATABASE_PATH with the path 
+of the B5.sqlite database you want to use. 
 
 ### Get decrypted valued
 ```
@@ -27,6 +26,12 @@ op-local get uuid [field]
 ```
 op-local list [--format='{uuid} {title}']
 ```
+
+The format string allows you to customize the ouput format of the list items. You can use any field, 
+the first match in any section will be used.
+ ```
+ op-local list --format='{uuid}|{title}|{username}|{password}'
+ ```
 
 ## Why this project ?
 
