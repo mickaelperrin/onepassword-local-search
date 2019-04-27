@@ -2,6 +2,7 @@ from sys import exit
 from onepassword_local_search.exceptions.ManagedException import ManagedException
 from onepassword_local_search.OnePassword import OnePassword
 from argparse import ArgumentParser, Namespace
+import sys
 
 
 class CliSimple:
@@ -35,6 +36,9 @@ class CliSimple:
             return getattr(app, self.args.command.replace('-', '_'))()
         except ManagedException as e:
             exit(e.args[0])
+        except (BrokenPipeError, IOError):
+            sys.stderr.close()
+            pass
 
 
 
