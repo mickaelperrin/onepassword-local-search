@@ -20,10 +20,10 @@ class OnePassword:
     def _get_encrypted_item(self, uuid):
         return Item(self.storageService.get_item_by_uuid(uuid))
 
-    def get(self, uuid, field=None):
-        encrypted_item = self._get_encrypted_item(uuid)
+    def get(self, args):
+        encrypted_item = self._get_encrypted_item(args.uuid)
         item = self.cryptoService.decrypt_item(encrypted_item)
-        decrypted_field = item.get(field)
+        decrypted_field = item.get(args.field)
         print(decrypted_field, end='')
         return decrypted_field
 
