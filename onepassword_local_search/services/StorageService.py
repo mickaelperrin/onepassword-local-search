@@ -1,6 +1,7 @@
 from os import environ, path as os_path
 from sqlite3 import Connection, Cursor, connect as sqlite3_connect
 from onepassword_local_search.exceptions.ManagedException import ManagedException
+from platform import system
 
 
 class StorageService:
@@ -28,19 +29,23 @@ class StorageService:
         return res
 
     @staticmethod
-    def guess_database_dir():
+    def guess_database_path():
         if environ.get('ONEPASSWORD_LOCAL_DATABASE_PATH'):
             path = environ.get('ONEPASSWORD_LOCAL_DATABASE_PATH')
+        elif system() == 'Darwin':
+            path = os_path.join(environ.get('HOME'), 'Library', 'Group Containers', '2BUA8C4S2C.com.agilebits', 'Library', 'Application Support', '1Password', 'Data', 'B5.sqlite')
+        elif system() == 'Windows':
+            path = os_path.join(environ.get('LocalAppData'), '1password', 'data', '1Password10.sqlite')
         else:
             path = None
 
         if path is not None and path != '':
             return path
         else:
-            raise Exception('Unable to determine 1Password local database path')
+            raise Exception('Unable to determine 1Password local database patsh')
 
     def set_database_connexion(self):
-        path = os_path.expandvars(self.guess_database_dir())
+        path = os_path.expandvars(self.guess_database_path())
         if not os_path.isfile(path):
             raise Exception('Database file not found at ' + path)
         con = sqlite3_connect(path)
