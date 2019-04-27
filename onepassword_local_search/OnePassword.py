@@ -4,16 +4,19 @@ from onepassword_local_search.models.Item import Item
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from re import sub as re_sub
 import string
+from argparse import Namespace
 
 
 class OnePassword:
 
+    args: Namespace
     storageService: StorageService
     cryptoService: CryptoService
     configFileService: ConfigFileService
 
     def __init__(self):
         self.storageService = StorageService()
+        self.args = args
         self.configFileService = ConfigFileService()
         self.cryptoService = CryptoService(self.storageService, self.configFileService)
 
@@ -27,11 +30,11 @@ class OnePassword:
         print(decrypted_field, end='')
         return decrypted_field
 
-    def list(self, args):
+    def list(self):
         class SimpleFormatter(string.Formatter):
             def get_value(self, key, args, kwargs):
                 return decrypted_item.get(key, strict=False)
-        list_format = args.format if args.format else '{uuid} {title}'
+        list_format = self.args.format if self.args.format else '{uuid} {title}'
         sf = SimpleFormatter()
         for item in self.storageService.list():
             decrypted_item = self.cryptoService.decrypt_item(Item(item))

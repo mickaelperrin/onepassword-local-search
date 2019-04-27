@@ -2,32 +2,35 @@ from .__version__ import __version__
 from sys import exit
 from onepassword_local_search.exceptions.ManagedException import ManagedException
 from onepassword_local_search.OnePassword import OnePassword
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 
 class CliSimple:
 
-    action: str
-    args: []
-    field: str
-    format: str
-    script_name: str
-    uuid: str
+    args: Namespace
+    command: str
 
-    def __init__(self, script_name, action='version', *args):
+    def __init__(self, *args):
 
-        self.parser = ArgumentParser()
-        self.action = action
-        self.script_name = script_name
-        self.args = args
+        parser = ArgumentParser()
+        subparsers = parser.add_subparsers(dest='command')
+
+        action_get = subparsers.add_parser('get')
+        action_get.add_argument('uuid', help='uuid to fetch')
+        action_get.add_argument('field', help='field to retrieve')
+        action_get.add_argument('--use-custom-uuid', help='use custom UUID mapping')
+
+        action_list = subparsers.add_parser('list')
+        action_list.add_argument('--format', help='custom format string')
+
+        action_version = subparsers.add_parser('version')
+
+        action_update_mapping = subparsers.add_parser('update-mapping')
+
+        self.args = parser.parse_args(args[1:])
 
     def run(self):
-        if self.action == 'get':
-            return self.get()
-        elif self.action == 'list':
-            return self.list()
-        else:
-            return self.version()
+        return getattr(self, self.args.command.replace('-', '_'))()
 
     @staticmethod
     def usage(action='get'):
@@ -35,24 +38,19 @@ class CliSimple:
             print('Usage: get field UUID')
 
     def get(self):
-        self.parser.add_argument('uuid', help='uuid to fetch')
-        self.parser.add_argument('field', help='field to retrieve')
-        parsed_args = self.parser.parse_args(self.args)
-        if parsed_args.uuid is None:
-            print('Error: UUID is required to get secret')
-            print(self.usage())
-            exit(1)
         try:
-            app = OnePassword()
-            return app.get(parsed_args)
+            app = OnePassword(self.args)
+            return app.get(self.args)
         except ManagedException as e:
             exit(e.args[0])
 
     def list(self):
-        self.parser.add_argument('--format', help='custom format string')
-        parsed_args = self.parser.parse_args(self.args)
-        app = OnePassword()
-        return app.list(parsed_args)
+        app = OnePassword(self.args)
+        return app.list()
+
+    def update_mapping(self):
+        app = OnePassword(self.args)
+        return app.update_mapping()
 
     @staticmethod
     def version():
