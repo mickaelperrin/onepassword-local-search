@@ -122,3 +122,21 @@ ngkzmk54qoltpdoseqspma4tba
 smeg46sk3agiee4cfinvpf7z4u username password
 w2euij3m4zhqa5opftnthe5d4q username password
 zzfmhu2j7ajq55mmpm3ihs3oqy username password'''
+
+
+@pytest.mark.usefixtures("op_session")
+def test_list_custom_uuid(capsys):
+    CliSimple('script', 'list', '--format={uuid} {UUID}').run()
+    std = capsys.readouterr()
+    assert '\n'.join(sorted(std.out.split('\n'))) == '''
+5pwta5jhf5fhj5wzfek4sb22ve
+a53bppwuhi65b2e34g45fjyfwu c08335ad-5f93-471f-8605-2500ae4b9ce1
+akvb4bbdequd3z6tuorl44btqm
+e25haqmocd5ifiymorfzwxnzry 84103613-2483-430d-8e74-bc72036f378c
+hujxh3pryngc7du3owbkwwuh3i
+mvkzp2v2myljdqzxcv5736optu b325bc32-7c2d-4107-bc2c-73777cb3e33a
+n3iopimevz3pddels3dgfwyp2a 41495d3a-9b1a-4ce6-9bbd-82fbc4e538a9
+ngkzmk54qoltpdoseqspma4tba 4dc2d37a-bc4e-47a8-a96b-206048b7d7d5
+smeg46sk3agiee4cfinvpf7z4u 6bf1b272-f35d-4087-808f-253909fb0c91
+w2euij3m4zhqa5opftnthe5d4q f544c30d-612f-4c70-9686-cf95b9d9f096
+zzfmhu2j7ajq55mmpm3ihs3oqy c3264cef-1e5e-4c96-a192-26729539f3f5'''
