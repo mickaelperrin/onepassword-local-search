@@ -16,15 +16,16 @@ class CliSimple:
 
         action_get = subparsers.add_parser('get')
         action_get.add_argument('uuid', help='uuid to fetch')
-        action_get.add_argument('field', help='field to retrieve')
-        action_get.add_argument('--use-custom-uuid', help='use custom UUID mapping')
+        action_get.add_argument('field', help='field to retrieve', nargs='?', default=None)
+        action_get.add_argument('--use-custom-uuid', help='use custom UUID mapping', nargs='?', default=False, const=True)
 
         action_list = subparsers.add_parser('list')
         action_list.add_argument('--format', help='custom format string')
 
         action_version = subparsers.add_parser('version')
 
-        action_update_mapping = subparsers.add_parser('update-mapping')
+        action_update_mapping = subparsers.add_parser('mapping')
+        action_update_mapping.add_argument('subcommand', help='update or list', choices=['list', 'update'])
 
         self.args = parser.parse_args(args[1:])
 

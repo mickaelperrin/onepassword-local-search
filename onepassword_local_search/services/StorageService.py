@@ -9,10 +9,19 @@ class StorageService:
     app_path: str
     con: Connection
     cur: Cursor
+    uuid_mapping_table_name: str = 'uuid_mapping'
+    use_custom_uuid_mapping: bool = False
 
-    def __init__(self):
+    def __init__(self, use_custom_uuid_mapping=False):
+        self.use_custom_uuid_mapping = use_custom_uuid_mapping
         self.con = self.set_database_connexion()
         self.cur = self.con.cursor()
+        if use_custom_uuid_mapping:
+            self.checks_for_uuid_mapping()
+
+    def checks_for_uuid_mapping(self):
+        if not self._has_table(StorageService.uuid_mapping_table_name):
+            self.create_uuid_mapping_table()
 
     @staticmethod
     def _dict_factory(cursor, row):
@@ -21,12 +30,54 @@ class StorageService:
             d[col[0]] = row[idx]
         return d
 
-    def get_item_by_uuid(self, uuid):
-        query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
+    def _has_table(self, table_name):
+        query = "SELECT name from sqlite_master WHERE type='table' AND name='%s';" % table_name
+        return self.con.execute(query).fetchone()
+
+    def create_uuid_mapping_table(self):
+        request = """
+                    BEGIN;
+                    CREATE TABLE IF NOT EXISTS %s (                        
+                        op_uuid TEXT,
+                        custom_uuid TEXT,
+                        PRIMARY KEY (op_uuid, custom_uuid),
+                        FOREIGN KEY (op_uuid) REFERENCES items (uuid)
+                        ON DELETE CASCADE
+                    );
+                    CREATE INDEX idx_%s_custom_uuid ON %s (custom_uuid);
+                    COMMIT;
+                  """ % (StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name)
+        return self.con.executescript(request)
+
+    def truncate_uuid_mapping_table(self):
+        request = """
+                    BEGIN;
+                    DELETE FROM uuid_mapping; 
+                    COMMIT;
+                  """
+        return self.con.executescript(request)
+
+    def uuid_mapping_has_entries(self):
+        query = "SELECT COUNT(custom_uuid) as nb FROM %s" % StorageService.uuid_mapping_table_name
+        return self.cur.execute(query).fetchone()['nb']
+
+    def get_item_by_uuid(self, uuid, use_custom_uuid_mapping=False):
+        if use_custom_uuid_mapping:
+            query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE custom_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
+        else:
+            query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
         res = self.cur.execute(query).fetchone()
         if res is None:
             raise ManagedException('Unable to find item with uuid: %s' % uuid)
         return res
+
+    def list_mapping(self):
+        query = "SELECT * FROM %s;" % StorageService.uuid_mapping_table_name
+        return self.cur.execute(query).fetchall()
+
+    def add_uuid_mapping(self, custom_uuid, op_uuid):
+        request = "INSERT INTO %s VALUES ('%s','%s')" % (StorageService.uuid_mapping_table_name, op_uuid, custom_uuid)
+        return self.cur.execute(request)
 
     @staticmethod
     def guess_database_path():

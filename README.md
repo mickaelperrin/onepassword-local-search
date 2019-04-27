@@ -19,7 +19,7 @@ of the B5.sqlite database you want to use.
 
 ### Get decrypted valued
 ```
-op-local get uuid [field]
+op-local get uuid [field] [--use-custom-uuid]
 ```
 
 ### List items
@@ -32,6 +32,19 @@ the first match in any section will be used.
  ```
  op-local list --format='{uuid}|{title}|{username}|{password}'
  ```
+
+### UUID mapping
+
+uuid in 1Password changes when you move an item from one vault to another. To prevent this issue, a custom uuid
+mapping feature has been implemented.
+
+You need to add on each item a field named `UUID`.
+
+Then run `op-local mapping update` to generate the mapping talbe relationship.
+
+You can now get an item using your own `UUID` by appending the `--use-custom-uuid` flag to the `get` command.
+
+You can display UUID mapping by running `op-local mapping list`.
 
 ## Why this project ?
 

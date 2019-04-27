@@ -13,20 +13,26 @@ class OnePassword:
     storageService: StorageService
     cryptoService: CryptoService
     configFileService: ConfigFileService
+    useCustomUUIDMapping: bool = False
 
-    def __init__(self):
-        self.storageService = StorageService()
+    def __init__(self, args):
         self.args = args
+        if 'use_custom_uuid' in self.args.__dict__.keys():
+            self.useCustomUUIDMapping = self.args.use_custom_uuid
+        self.storageService = StorageService(self.useCustomUUIDMapping)
         self.configFileService = ConfigFileService()
         self.cryptoService = CryptoService(self.storageService, self.configFileService)
+        if self.useCustomUUIDMapping:
+            self._ensure_uuid_mapping_has_values()
 
-    def _get_encrypted_item(self, uuid):
-        return Item(self.storageService.get_item_by_uuid(uuid))
+    def _ensure_uuid_mapping_has_values(self):
+        if not self.storageService.uuid_mapping_has_entries():
+            self.mapping_update()
 
-    def get(self, args):
-        encrypted_item = self._get_encrypted_item(args.uuid)
+    def get(self):
+        encrypted_item = Item(self.storageService.get_item_by_uuid(self.args.uuid, self.useCustomUUIDMapping))
         item = self.cryptoService.decrypt_item(encrypted_item)
-        decrypted_field = item.get(args.field)
+        decrypted_field = item.get(self.args.field)
         print(decrypted_field, end='')
         return decrypted_field
 
@@ -39,6 +45,25 @@ class OnePassword:
         for item in self.storageService.list():
             decrypted_item = self.cryptoService.decrypt_item(Item(item))
             print(sf.format(list_format, decrypted_item).strip())
+
+    def mapping(self):
+        self.storageService.checks_for_uuid_mapping()
+        return getattr(self, 'mapping_' + self.args.subcommand)()
+
+    def mapping_update(self):
+        self.storageService.truncate_uuid_mapping_table()
+        for item in self.storageService.list():
+            decrypted_item = self.cryptoService.decrypt_item(Item(item))
+            custom_uuid = decrypted_item.get('UUID', strict=False)
+            if custom_uuid:
+                self.storageService.add_uuid_mapping(custom_uuid, decrypted_item.uuid)
+        self.storageService.con.commit()
+        self.storageService.con.close()
+
+    def mapping_list(self):
+        for item in self.storageService.list_mapping():
+            print("%s <-> %s" % (item['op_uuid'], item['custom_uuid']))
+        self.storageService.con.close()
 
     @staticmethod
     def version():

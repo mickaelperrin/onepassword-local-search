@@ -140,3 +140,30 @@ ngkzmk54qoltpdoseqspma4tba 4dc2d37a-bc4e-47a8-a96b-206048b7d7d5
 smeg46sk3agiee4cfinvpf7z4u 6bf1b272-f35d-4087-808f-253909fb0c91
 w2euij3m4zhqa5opftnthe5d4q f544c30d-612f-4c70-9686-cf95b9d9f096
 zzfmhu2j7ajq55mmpm3ihs3oqy c3264cef-1e5e-4c96-a192-26729539f3f5'''
+
+
+@pytest.mark.usefixtures("op_session")
+def test_get_by_custom_uuid(capsys):
+    CliSimple('script', 'get', common_data('login_uuid'), 'title').run()
+    std = capsys.readouterr()
+    out_op_uuid = std.out
+    CliSimple('script', 'get', common_data('login_custom_uuid'), 'title', '--use-custom-uuid').run()
+    std2 = capsys.readouterr()
+    out_custom_uuid = std2.out
+    assert out_custom_uuid == out_op_uuid
+
+
+@pytest.mark.usefixtures("op_session")
+def test_mapping_list(capsys):
+    CliSimple('script', 'mapping', 'update').run()
+    CliSimple('script', 'mapping', 'list').run()
+    std = capsys.readouterr()
+    assert std.out == """zzfmhu2j7ajq55mmpm3ihs3oqy <-> c3264cef-1e5e-4c96-a192-26729539f3f5
+smeg46sk3agiee4cfinvpf7z4u <-> 6bf1b272-f35d-4087-808f-253909fb0c91
+a53bppwuhi65b2e34g45fjyfwu <-> c08335ad-5f93-471f-8605-2500ae4b9ce1
+ngkzmk54qoltpdoseqspma4tba <-> 4dc2d37a-bc4e-47a8-a96b-206048b7d7d5
+mvkzp2v2myljdqzxcv5736optu <-> b325bc32-7c2d-4107-bc2c-73777cb3e33a
+w2euij3m4zhqa5opftnthe5d4q <-> f544c30d-612f-4c70-9686-cf95b9d9f096
+n3iopimevz3pddels3dgfwyp2a <-> 41495d3a-9b1a-4ce6-9bbd-82fbc4e538a9
+e25haqmocd5ifiymorfzwxnzry <-> 84103613-2483-430d-8e74-bc72036f378c
+"""
