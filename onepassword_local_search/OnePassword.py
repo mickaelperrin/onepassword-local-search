@@ -58,12 +58,10 @@ class OnePassword:
             if custom_uuid:
                 self.storageService.add_uuid_mapping(custom_uuid, decrypted_item.uuid)
         self.storageService.con.commit()
-        self.storageService.con.close()
 
     def mapping_list(self):
         for item in self.storageService.list_mapping():
             print("%s <-> %s" % (item['op_uuid'], item['custom_uuid']))
-        self.storageService.con.close()
 
     @staticmethod
     def version():
