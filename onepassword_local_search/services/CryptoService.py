@@ -120,6 +120,6 @@ class CryptoService:
     def is_authenticated(self):
         try:
             self._get_session_key() and self._get_encrypted_session_key()
-            return True
+            return 'You are logged in.'
         except:
             sys.exit(1)
