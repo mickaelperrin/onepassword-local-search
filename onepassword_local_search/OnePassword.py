@@ -40,3 +40,7 @@ class OnePassword:
             decrypted_item = self.cryptoService.decrypt_item(Item(item))
             print(sf.format(list_format, decrypted_item).strip())
 
+    @staticmethod
+    def version():
+        from .__version__ import __version__
+        print('Version: ' + __version__)

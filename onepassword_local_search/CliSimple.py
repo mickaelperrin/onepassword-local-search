@@ -1,4 +1,3 @@
-from .__version__ import __version__
 from sys import exit
 from onepassword_local_search.exceptions.ManagedException import ManagedException
 from onepassword_local_search.OnePassword import OnePassword
@@ -30,28 +29,11 @@ class CliSimple:
         self.args = parser.parse_args(args[1:])
 
     def run(self):
-        return getattr(self, self.args.command.replace('-', '_'))()
-
-    @staticmethod
-    def usage(action='get'):
-        if action == 'get':
-            print('Usage: get field UUID')
-
-    def get(self):
         try:
             app = OnePassword(self.args)
-            return app.get(self.args)
+            return getattr(app, self.args.command.replace('-', '_'))()
         except ManagedException as e:
             exit(e.args[0])
 
-    def list(self):
-        app = OnePassword(self.args)
-        return app.list()
 
-    def update_mapping(self):
-        app = OnePassword(self.args)
-        return app.update_mapping()
 
-    @staticmethod
-    def version():
-        print('Version: ' + __version__)
