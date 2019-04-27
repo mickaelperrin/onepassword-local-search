@@ -23,6 +23,8 @@ class CliSimple:
         action_list = subparsers.add_parser('list')
         action_list.add_argument('--format', help='custom format string')
 
+        action_is_authenticated = subparsers.add_parser('is-authenticated')
+
         action_version = subparsers.add_parser('version')
 
         action_update_mapping = subparsers.add_parser('mapping')

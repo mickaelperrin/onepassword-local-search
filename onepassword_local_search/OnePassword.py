@@ -67,3 +67,6 @@ class OnePassword:
     def version():
         from .__version__ import __version__
         print('Version: ' + __version__)
+
+    def is_authenticated(self):
+        return self.cryptoService.is_authenticated()

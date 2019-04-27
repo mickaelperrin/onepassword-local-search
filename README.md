@@ -33,6 +33,13 @@ the first match in any section will be used.
  op-local list --format='{uuid}|{title}|{username}|{password}'
  ```
 
+### Is authenticated
+```
+op-local is-authenticated
+```
+
+Check if the 1Password session is opened.
+
 ### UUID mapping
 
 uuid in 1Password changes when you move an item from one vault to another. To prevent this issue, a custom uuid

@@ -167,3 +167,19 @@ w2euij3m4zhqa5opftnthe5d4q <-> f544c30d-612f-4c70-9686-cf95b9d9f096
 n3iopimevz3pddels3dgfwyp2a <-> 41495d3a-9b1a-4ce6-9bbd-82fbc4e538a9
 e25haqmocd5ifiymorfzwxnzry <-> 84103613-2483-430d-8e74-bc72036f378c
 """
+
+
+@pytest.mark.usefixtures("no_op_session")
+def test_not_authenticated(capsys):
+    with pytest.raises(SystemExit) as exit_code:
+        CliSimple('script', 'is-authenticated').run()
+    std = capsys.readouterr()
+    assert exit_code.type == SystemExit
+    assert exit_code.value.code == 1
+
+
+@pytest.mark.usefixtures("op_session")
+def test_not_authenticated(capsys):
+    CliSimple('script', 'is-authenticated').run()
+    std = capsys.readouterr()
+    assert std.out == ''

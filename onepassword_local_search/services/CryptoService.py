@@ -5,6 +5,7 @@ from onepassword_local_search.lib.optestlib import aes_decrypt, get_binary_from_
 from os import environ as os_environ, path as os_path
 from json import loads as json_loads
 from glob import glob as glob_glob
+import sys
 
 
 class CryptoService:
@@ -116,5 +117,9 @@ class CryptoService:
 
         return item
 
-
-
+    def is_authenticated(self):
+        try:
+            self._get_session_key() and self._get_encrypted_session_key()
+            return True
+        except:
+            sys.exit(1)
