@@ -22,6 +22,7 @@ class CliSimple:
 
         action_list = subparsers.add_parser('list')
         action_list.add_argument('--format', help='custom format string')
+        action_list.add_argument('--filter', help='filter over title entry')
 
         action_is_authenticated = subparsers.add_parser('is-authenticated')
 

@@ -36,15 +36,22 @@ class OnePassword:
         print(decrypted_field, end='')
         return decrypted_field
 
+    def get_items(self, filter):
+        items = []
+        for item in self.storageService.list():
+            decrypted_item = self.cryptoService.decrypt_item(Item(item))
+            if filter is None or filter in decrypted_item.overview['title']:
+                items.append(decrypted_item)
+        return items
+
     def list(self):
         class SimpleFormatter(string.Formatter):
             def get_value(self, key, args, kwargs):
-                return decrypted_item.get(key, strict=False)
+                return item.get(key, strict=False)
         list_format = self.args.format if self.args.format else '{uuid} {title}'
         sf = SimpleFormatter()
-        for item in self.storageService.list():
-            decrypted_item = self.cryptoService.decrypt_item(Item(item))
-            print(sf.format(list_format, decrypted_item).strip())
+        for item in self.get_items(self.args.filter):
+            print(sf.format(list_format, item).strip())
 
     def mapping(self):
         self.storageService.checks_for_uuid_mapping()

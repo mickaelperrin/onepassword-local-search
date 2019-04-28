@@ -24,7 +24,7 @@ op-local get uuid [field] [--use-custom-uuid]
 
 ### List items
 ```
-op-local list [--format='{uuid} {title}']
+op-local list [--format='{uuid} {title}'] [--filter='']
 ```
 
 The format string allows you to customize the ouput format of the list items. You can use any field, 
@@ -32,6 +32,8 @@ the first match in any section will be used.
  ```
  op-local list --format='{uuid}|{title}|{username}|{password}'
  ```
+ 
+The filter will only return entries whose title contains the filter string. 
 
 ### Is authenticated
 ```
