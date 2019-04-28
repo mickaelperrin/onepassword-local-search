@@ -7,6 +7,7 @@ import sys
 
 class CliSimple:
 
+    onePassword: OnePassword
     args: Namespace
     command: str
 
@@ -35,13 +36,29 @@ class CliSimple:
 
     def run(self):
         try:
-            app = OnePassword(self.args)
-            return getattr(app, self.args.command.replace('-', '_'))()
+            use_custom_uuid = False
+            if hasattr(self.args, 'use_custom_uuid'):
+                use_custom_uuid = self.args.use_custom_uuid
+            self.onePassword = OnePassword(use_custom_uuid=use_custom_uuid)
+            return getattr(self, self.args.command.replace('-', '_'))()
         except ManagedException as e:
             exit(e.args[0])
         except (BrokenPipeError, IOError):
             sys.stderr.close()
             pass
 
+    def get(self):
+        return self.onePassword.get(self.args.uuid, self.args.field, self.args.use_custom_uuid)
 
+    def list(self):
+        return self.onePassword.list(self.args.format, self.args.filter)
+
+    def mapping(self):
+        return self.onePassword.mapping(self.args.subcommand)
+
+    def version(self):
+        return self.onePassword.version()
+
+    def is_authenticated(self):
+        return self.onePassword.is_authenticated()
 

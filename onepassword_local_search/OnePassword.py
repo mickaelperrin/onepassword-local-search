@@ -4,22 +4,17 @@ from onepassword_local_search.models.Item import Item
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from re import sub as re_sub
 import string
-from argparse import Namespace
 
 
 class OnePassword:
 
-    args: Namespace
     storageService: StorageService
     cryptoService: CryptoService
     configFileService: ConfigFileService
     useCustomUUIDMapping: bool = False
 
-    def __init__(self, args):
-        self.args = args
-        if 'use_custom_uuid' in self.args.__dict__.keys():
-            self.useCustomUUIDMapping = self.args.use_custom_uuid
-        self.storageService = StorageService(self.useCustomUUIDMapping)
+    def __init__(self, use_custom_uuid=False):
+        self.storageService = StorageService(use_custom_uuid)
         self.configFileService = ConfigFileService()
         self.cryptoService = CryptoService(self.storageService, self.configFileService)
         if self.useCustomUUIDMapping:
@@ -29,33 +24,33 @@ class OnePassword:
         if not self.storageService.uuid_mapping_has_entries():
             self.mapping_update()
 
-    def get(self):
-        encrypted_item = Item(self.storageService.get_item_by_uuid(self.args.uuid, self.useCustomUUIDMapping))
+    def get(self, uuid, field=None, use_custom_mapping=False):
+        encrypted_item = Item(self.storageService.get_item_by_uuid(uuid, use_custom_mapping))
         item = self.cryptoService.decrypt_item(encrypted_item)
-        decrypted_field = item.get(self.args.field)
+        decrypted_field = item.get(field)
         print(decrypted_field, end='')
         return decrypted_field
 
-    def get_items(self, filter):
+    def get_items(self, result_fitler):
         items = []
         for item in self.storageService.list():
             decrypted_item = self.cryptoService.decrypt_item(Item(item))
-            if filter is None or filter in decrypted_item.overview['title']:
+            if result_fitler is None or result_fitler in decrypted_item.overview['title']:
                 items.append(decrypted_item)
         return items
 
-    def list(self):
+    def list(self, result_format=None, result_fitler=None):
         class SimpleFormatter(string.Formatter):
             def get_value(self, key, args, kwargs):
                 return item.get(key, strict=False)
-        list_format = self.args.format if self.args.format else '{uuid} {title}'
+        list_format = result_format if result_format else '{uuid} {title}'
         sf = SimpleFormatter()
-        for item in self.get_items(self.args.filter):
+        for item in self.get_items(result_fitler):
             print(sf.format(list_format, item).strip())
 
-    def mapping(self):
+    def mapping(self, subcommand):
         self.storageService.checks_for_uuid_mapping()
-        return getattr(self, 'mapping_' + self.args.subcommand)()
+        return getattr(self, 'mapping_' + subcommand)()
 
     def mapping_update(self):
         self.storageService.truncate_uuid_mapping_table()
