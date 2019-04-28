@@ -54,6 +54,9 @@ class Item:
                         if f['t'] == field or f['n'] == field:
                             out = f['v']
                             break
+                    else:
+                        pass
+                    break
 
         if strict and out is None:
             raise ManagedException('Unable to find field %s of item %s ' % (field, self.uuid))
