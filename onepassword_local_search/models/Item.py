@@ -20,11 +20,11 @@ class Item:
         self.encryptedOverview = Cipher(row['overview'])
         self.encryptedDetails = Cipher(row['details'])
 
-    def get(self, field=None, strict=True):
+    def get(self, field=None, strict=True, output=True):
         if field is None:
             self.__delattr__('encryptedOverview')
             self.__delattr__('encryptedDetails')
-            return self.output(self.__dict__)
+            return self.output(self, output)
 
         path = field.split(';;')
         out = None
@@ -72,9 +72,11 @@ class Item:
                     return f['value']
         return None
 
-    def output(self, content):
+    def output(self, content, output=True):
+        if not output:
+            return content
         out_type = type(content).__name__
         if out_type in ['str', 'int']:
             return content
         else:
-            return json_dumps(content)
+            return json_dumps(content.__dict__)

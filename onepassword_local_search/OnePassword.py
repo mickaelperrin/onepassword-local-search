@@ -24,11 +24,12 @@ class OnePassword:
         if not self.storageService.uuid_mapping_has_entries():
             self.mapping_update()
 
-    def get(self, uuid, field=None, use_custom_mapping=False):
+    def get(self, uuid, field=None, use_custom_mapping=False, output=True):
         encrypted_item = Item(self.storageService.get_item_by_uuid(uuid, use_custom_mapping))
         item = self.cryptoService.decrypt_item(encrypted_item)
-        decrypted_field = item.get(field)
-        print(decrypted_field, end='')
+        decrypted_field = item.get(field, output=output)
+        if output:
+            print(decrypted_field, end='')
         return decrypted_field
 
     def get_items(self, result_fitler):
