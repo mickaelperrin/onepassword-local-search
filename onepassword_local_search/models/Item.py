@@ -20,6 +20,24 @@ class Item:
         self.encryptedOverview = Cipher(row['overview'])
         self.encryptedDetails = Cipher(row['details'])
 
+    def _search_recursive_in_sections(self, field):
+        # Fallback: search fieldName is all sections
+        for section in self.details.get('sections'):
+            if section.get('fields'):
+                for f in section['fields']:
+                    if f['t'] == field or f['n'] == field:
+                        return f['v']
+        return None
+
+    def _search_recursive_in_section(self, section_name, field):
+        for section in self.details.get('sections'):
+            if section['title'] == section_name:
+                for f in section['fields']:
+                    if f['t'] == field or f['n'] == field:
+                        return f['v']
+        return None
+
+
     def get(self, field=None, strict=True, output=True):
         if field is None:
             self.__delattr__('encryptedOverview')
@@ -40,23 +58,10 @@ class Item:
         elif hasattr(self, field) and (out is None or out == ''):
             out = self.__getattribute__(field)
         elif len(path) > 1 and (out is None or out == ''):
-            for section in self.details.get('sections'):
-                if section['title'] == path[0]:
-                    for f in section['fields']:
-                        if f['t'] == path[1] or f['n'] == path[1]:
-                            out = f['v']
-                            break
+            out = self._search_recursive_in_section(path[0], path[1])
         if out is None and self.details.get('sections'):
-            # Fallback: search fieldName is all sections
-            for section in self.details.get('sections'):
-                if section.get('fields'):
-                    for f in section['fields']:
-                        if f['t'] == field or f['n'] == field:
-                            out = f['v']
-                            break
-                    else:
-                        pass
-                    break
+            out = self._search_recursive_in_sections(field)
+
 
         if strict and out is None:
             raise ManagedException('Unable to find field %s of item %s ' % (field, self.uuid))
