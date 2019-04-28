@@ -17,7 +17,7 @@ class OnePassword:
         self.storageService = StorageService(use_custom_uuid)
         self.configFileService = ConfigFileService()
         self.cryptoService = CryptoService(self.storageService, self.configFileService)
-        if self.useCustomUUIDMapping:
+        if use_custom_uuid:
             self._ensure_uuid_mapping_has_values()
 
     def _ensure_uuid_mapping_has_values(self):
