@@ -25,7 +25,7 @@ class Item:
         for section in self.details.get('sections'):
             if section.get('fields'):
                 for f in section['fields']:
-                    if f['t'] == field or f['n'] == field:
+                    if (f['t'] == field or f['n'] == field) and 'v' in f.keys():
                         return f['v']
         return None
 
@@ -33,10 +33,9 @@ class Item:
         for section in self.details.get('sections'):
             if section['title'] == section_name:
                 for f in section['fields']:
-                    if f['t'] == field or f['n'] == field:
+                    if (f['t'] == field or f['n'] == field) and 'v' in f.keys():
                         return f['v']
         return None
-
 
     def get(self, field=None, strict=True, output=True):
         if field is None:
@@ -61,7 +60,6 @@ class Item:
             out = self._search_recursive_in_section(path[0], path[1])
         if out is None and self.details.get('sections'):
             out = self._search_recursive_in_sections(field)
-
 
         if strict and out is None:
             raise ManagedException('Unable to find field %s of item %s ' % (field, self.uuid))
