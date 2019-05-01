@@ -120,9 +120,10 @@ class StorageService:
         return self.cur.execute(query).fetchone()['enc_pri_key']
 
     def get_encrypted_vault_key(self, vault_id, account_id):
-        query = "select enc_vault_key from vault_access where id=%s and account_id=%s;" % (vault_id, account_id)
+        query = "select enc_vault_key from vault_access where vault_id=%s and account_id=%s;" % (vault_id, account_id)
         return self.cur.execute(query).fetchone()['enc_vault_key']
 
-    def list(self):
-        query = "select * from items where trashed = 0"
+    def list(self, user_uuid):
+        account_id = self.get_account_id_from_user_uuid(user_uuid)
+        query = "select * from items where trashed=0 and vault_id in (select vault_id from vault_access where account_id=%s)" % account_id
         return self.cur.execute(query).fetchall()

@@ -34,7 +34,7 @@ class OnePassword:
 
     def get_items(self, result_fitler):
         items = []
-        for item in self.storageService.list():
+        for item in self.storageService.list(self.configFileService.get_user_uuid()):
             decrypted_item = self.cryptoService.decrypt_item(Item(item))
             if result_fitler is None or result_fitler in decrypted_item.overview['title']:
                 items.append(decrypted_item)
@@ -55,7 +55,7 @@ class OnePassword:
 
     def mapping_update(self):
         self.storageService.truncate_uuid_mapping_table()
-        for item in self.storageService.list():
+        for item in self.storageService.list(self.configFileService.get_user_uuid()):
             decrypted_item = self.cryptoService.decrypt_item(Item(item))
             custom_uuid = decrypted_item.get('UUID', strict=False)
             if custom_uuid:
