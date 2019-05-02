@@ -20,6 +20,7 @@ class CliSimple:
         action_get.add_argument('uuid', help='uuid to fetch')
         action_get.add_argument('field', help='field to retrieve', nargs='?', default=None)
         action_get.add_argument('--use-custom-uuid', help='use custom UUID mapping', nargs='?', default=False, const=True)
+        action_get.add_argument('--use-lastpass-uuid', help='use LastPass UUID mapping', nargs='?', default=False, const=True)
 
         action_list = subparsers.add_parser('list')
         action_list.add_argument('--format', help='custom format string')
@@ -31,15 +32,18 @@ class CliSimple:
 
         action_update_mapping = subparsers.add_parser('mapping')
         action_update_mapping.add_argument('subcommand', help='update or list', choices=['list', 'update'])
+        action_update_mapping.add_argument('--use-lastpass-uuid', help='list using lastpass uuid', nargs='?', default=False, const=True)
 
         self.args = parser.parse_args(args[1:])
 
     def run(self):
         try:
-            use_custom_uuid = False
+            custom_uuid_mapping = None
             if hasattr(self.args, 'use_custom_uuid'):
-                use_custom_uuid = self.args.use_custom_uuid
-            self.onePassword = OnePassword(use_custom_uuid=use_custom_uuid)
+                custom_uuid_mapping = 'UUID'
+            elif hasattr(self.args, 'use_lastpass_uuid'):
+                custom_uuid_mapping = 'LASTPASS'
+            self.onePassword = OnePassword(custom_uuid_mapping=custom_uuid_mapping)
             return getattr(self, self.args.command.replace('-', '_'))()
         except ManagedException as e:
             exit(e.args[0])
@@ -48,13 +52,19 @@ class CliSimple:
             pass
 
     def get(self):
-        return self.onePassword.get(self.args.uuid, self.args.field, self.args.use_custom_uuid)
+        if self.args.use_custom_uuid:
+            custom_uuid_mapping = 'UUID'
+        elif self.args.use_lastpass_uuid:
+            custom_uuid_mapping = 'LASTPASS'
+        else:
+            custom_uuid_mapping = None
+        return self.onePassword.get(self.args.uuid, self.args.field, custom_uuid_mapping)
 
     def list(self):
         return self.onePassword.list(self.args.format, self.args.filter)
 
     def mapping(self):
-        return self.onePassword.mapping(self.args.subcommand)
+        return self.onePassword.mapping(self.args.subcommand, self.args.use_lastpass_uuid)
 
     def version(self):
         return self.onePassword.version()

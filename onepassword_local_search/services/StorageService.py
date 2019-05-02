@@ -10,13 +10,13 @@ class StorageService:
     con: Connection
     cur: Cursor
     uuid_mapping_table_name: str = 'uuid_mapping'
-    use_custom_uuid_mapping: bool = False
+    custom_uuid_mapping: str = None
 
-    def __init__(self, use_custom_uuid_mapping=False):
-        self.use_custom_uuid_mapping = use_custom_uuid_mapping
+    def __init__(self, custom_uuid_mapping=None):
+        self.custom_uuid_mapping = custom_uuid_mapping
         self.con = self.set_database_connexion()
         self.cur = self.con.cursor()
-        if use_custom_uuid_mapping:
+        if custom_uuid_mapping:
             self.checks_for_uuid_mapping()
 
     def checks_for_uuid_mapping(self):
@@ -40,13 +40,16 @@ class StorageService:
                     CREATE TABLE IF NOT EXISTS %s (                        
                         op_uuid TEXT,
                         custom_uuid TEXT,
-                        PRIMARY KEY (op_uuid, custom_uuid),
-                        FOREIGN KEY (op_uuid) REFERENCES items (uuid)
-                        ON DELETE CASCADE
+                        lpass_uuid TEXT,
+                        PRIMARY KEY (op_uuid, custom_uuid)
                     );
                     CREATE INDEX idx_%s_custom_uuid ON %s (custom_uuid);
+                    CREATE INDEX idx_%s_lpass_uuid ON %s (lpass_uuid);
                     COMMIT;
-                  """ % (StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name)
+                  """ % (StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name,
+                         StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name,
+                         StorageService.uuid_mapping_table_name)
+        print(request)
         return self.con.executescript(request)
 
     def truncate_uuid_mapping_table(self):
@@ -61,9 +64,11 @@ class StorageService:
         query = "SELECT COUNT(custom_uuid) as nb FROM %s" % StorageService.uuid_mapping_table_name
         return self.cur.execute(query).fetchone()['nb']
 
-    def get_item_by_uuid(self, uuid, use_custom_uuid_mapping=False):
-        if use_custom_uuid_mapping:
+    def get_item_by_uuid(self, uuid, custom_uuid_mapping=None):
+        if custom_uuid_mapping == 'UUID':
             query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE custom_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
+        elif custom_uuid_mapping == 'LASTPASS':
+            query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE lpass_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
         else:
             query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
         res = self.cur.execute(query).fetchone()
@@ -75,8 +80,10 @@ class StorageService:
         query = "SELECT * FROM %s;" % StorageService.uuid_mapping_table_name
         return self.cur.execute(query).fetchall()
 
-    def add_uuid_mapping(self, custom_uuid, op_uuid):
-        request = "INSERT INTO %s VALUES ('%s','%s')" % (StorageService.uuid_mapping_table_name, op_uuid, custom_uuid)
+    def add_uuid_mapping(self, custom_uuid, op_uuid, lpass_uuid):
+        if lpass_uuid is None:
+            lpass_uuid = ''
+        request = "INSERT INTO %s VALUES ('%s','%s','%s')" % (StorageService.uuid_mapping_table_name, op_uuid, custom_uuid, lpass_uuid)
         return self.cur.execute(request)
 
     @staticmethod

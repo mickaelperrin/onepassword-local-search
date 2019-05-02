@@ -19,7 +19,7 @@ of the B5.sqlite database you want to use.
 
 ### Get decrypted valued
 ```
-op-local get uuid [field] [--use-custom-uuid]
+op-local get uuid [field] [--use-custom-uuid] [--use-lastpass-uuid]
 ```
 
 ### List items
@@ -52,6 +52,8 @@ You need to add on each item a field named `UUID`.
 Then run `op-local mapping update` to generate the mapping talbe relationship.
 
 You can now get an item using your own `UUID` by appending the `--use-custom-uuid` flag to the `get` command.
+
+`--use-lastpass-uuid` flag does the same thing but with a `LASTPASS_ID` field.
 
 You can display UUID mapping by running `op-local mapping list`.
 

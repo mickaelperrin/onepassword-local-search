@@ -14,6 +14,7 @@ def common_data(item):
         item_uuid='e25haqmocd5ifiymorfzwxnzry',
         login_uuid='zzfmhu2j7ajq55mmpm3ihs3oqy',
         login_custom_uuid='c3264cef-1e5e-4c96-a192-26729539f3f5',
+        login_lastpass_uuid='1234567890',
         subdomain='onepassword_local_search',
         session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI',
         session_filename='.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'
@@ -48,6 +49,7 @@ def op_session(monkeypatch, mocker):
 def storage_service(monkeypatch):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     return StorageService()
+
 
 @pytest.mark.usefixtures("op_session")
 @pytest.fixture

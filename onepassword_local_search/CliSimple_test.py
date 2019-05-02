@@ -155,6 +155,16 @@ def test_get_by_custom_uuid(capsys):
 
 
 @pytest.mark.usefixtures("op_session")
+def test_get_by_lastpass_uuid(capsys):
+    CliSimple('script', 'get', common_data('login_uuid'), 'title').run()
+    std = capsys.readouterr()
+    out_op_uuid = std.out
+    CliSimple('script', 'get', common_data('login_lastpass_uuid'), 'title', '--use-lastpass-uuid').run()
+    std2 = capsys.readouterr()
+    out_custom_uuid = std2.out
+    assert out_custom_uuid == out_op_uuid
+
+@pytest.mark.usefixtures("op_session")
 def test_mapping_list(capsys):
     CliSimple('script', 'mapping', 'update').run()
     CliSimple('script', 'mapping', 'list').run()
@@ -167,6 +177,22 @@ mvkzp2v2myljdqzxcv5736optu <-> b325bc32-7c2d-4107-bc2c-73777cb3e33a
 w2euij3m4zhqa5opftnthe5d4q <-> f544c30d-612f-4c70-9686-cf95b9d9f096
 n3iopimevz3pddels3dgfwyp2a <-> 41495d3a-9b1a-4ce6-9bbd-82fbc4e538a9
 e25haqmocd5ifiymorfzwxnzry <-> 84103613-2483-430d-8e74-bc72036f378c
+"""
+
+
+@pytest.mark.usefixtures("op_session")
+def test_mapping_list_lastpass(capsys):
+    CliSimple('script', 'mapping', 'update').run()
+    CliSimple('script', 'mapping', 'list', '--use-lastpass-uuid').run()
+    std = capsys.readouterr()
+    assert std.out == """zzfmhu2j7ajq55mmpm3ihs3oqy <-> 1234567890
+smeg46sk3agiee4cfinvpf7z4u <-> 
+a53bppwuhi65b2e34g45fjyfwu <-> 
+ngkzmk54qoltpdoseqspma4tba <-> 
+mvkzp2v2myljdqzxcv5736optu <-> 
+w2euij3m4zhqa5opftnthe5d4q <-> 
+n3iopimevz3pddels3dgfwyp2a <-> 
+e25haqmocd5ifiymorfzwxnzry <-> 
 """
 
 
