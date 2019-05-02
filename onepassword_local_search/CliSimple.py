@@ -39,9 +39,9 @@ class CliSimple:
     def run(self):
         try:
             custom_uuid_mapping = None
-            if hasattr(self.args, 'use_custom_uuid'):
+            if hasattr(self.args, 'use_custom_uuid') and self.args.use_custom_uuid:
                 custom_uuid_mapping = 'UUID'
-            elif hasattr(self.args, 'use_lastpass_uuid'):
+            elif hasattr(self.args, 'use_lastpass_uuid') and self.args.use_lastpass_uuid:
                 custom_uuid_mapping = 'LASTPASS'
             self.onePassword = OnePassword(custom_uuid_mapping=custom_uuid_mapping)
             return getattr(self, self.args.command.replace('-', '_'))()
