@@ -40,3 +40,6 @@ class ConfigFileService:
                 continue
             else:
                 return account['userUUID']
+
+    def get_accounts(self):
+        return self.config['accounts']

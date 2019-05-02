@@ -15,8 +15,10 @@ def common_data(item):
         login_uuid='zzfmhu2j7ajq55mmpm3ihs3oqy',
         login_custom_uuid='c3264cef-1e5e-4c96-a192-26729539f3f5',
         login_lastpass_uuid='1234567890',
+        personal_login_uuid='jgnp5odpifg2rhg4au2crq3v2y',
         subdomain='onepassword_local_search',
         session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI',
+        personal_session_key='PZzU_dhGL_EjKj6zqKnS5V2tmPI5cubi6ATVSfiX26k',
         session_filename='.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'
     ).get(item)
 
@@ -37,7 +39,33 @@ def no_op_session(monkeypatch, mocker):
 def op_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
-    monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FILE', path.join(path.dirname(__file__), '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'))
+    monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
+    mocker.patch.object(ConfigFileService, '_get_local_config')
+    with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
+        config = f.read()
+        f.close()
+    ConfigFileService._get_local_config.return_value = json_loads(config)
+
+
+@pytest.fixture
+def op_personal_session(monkeypatch, mocker):
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('OP_SESSION_my', common_data('personal_session_key'))
+    monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
+    mocker.patch.object(ConfigFileService, '_get_local_config')
+    with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
+        config = f.read()
+        f.close()
+    ConfigFileService._get_local_config.return_value = json_loads(config)
+
+
+
+@pytest.fixture
+def op_dual_session(monkeypatch, mocker):
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('OP_SESSION_my', common_data('personal_session_key'))
+    monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
+    monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
     mocker.patch.object(ConfigFileService, '_get_local_config')
     with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
         config = f.read()

@@ -46,5 +46,6 @@ def test_vault_key(crypto_service):
 
 @pytest.mark.usefixtures("op_session")
 def test_get_encrypted_session_file_path(crypto_service, monkeypatch):
-    monkeypatch.delenv('OP_SESSION_PRIVATE_KEY_FILE')
+    if os.environ.get('OP_SESSION_PRIVATE_KEY_FILE'):
+        monkeypatch.delenv('OP_SESSION_PRIVATE_KEY_FILE')
     assert crypto_service._get_encrypted_session_file_path() == os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests', '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w')

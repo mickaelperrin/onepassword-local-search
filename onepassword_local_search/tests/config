@@ -7,6 +7,13 @@
 			"email": "dev+onepassword-local-search@dkod.fr",
 			"accountKey": "A3-TF7ENY-6T8PH5-6KBLQ-RXPGF-AMFNJ-3QYAW",
 			"userUUID": "2ENM3KNHAVGQRLCAWVSPVHO344"
+		},
+		{
+			"shorthand": "my",
+			"url": "https://my.1password.com",
+			"email": "dev+onepassword-local-search-user@dkod.fr",
+			"accountKey": "A3-V7DXDN-76AKSD-HHMHJ-QQVM7-CWWP7-CA279",
+			"userUUID": "6SMYYXSWFFH2BBVAGDAPOICL2Y"
 		}
 	]
 }
