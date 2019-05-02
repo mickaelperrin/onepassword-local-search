@@ -38,6 +38,8 @@ class CliSimple:
 
     def run(self):
         try:
+            if self.args.command == 'version':
+                return self.version()
             custom_uuid_mapping = None
             if hasattr(self.args, 'use_custom_uuid') and self.args.use_custom_uuid:
                 custom_uuid_mapping = 'UUID'
@@ -67,7 +69,7 @@ class CliSimple:
         return self.onePassword.mapping(self.args.subcommand, self.args.use_lastpass_uuid)
 
     def version(self):
-        return self.onePassword.version()
+        return OnePassword.version()
 
     def is_authenticated(self):
         return self.onePassword.is_authenticated()
