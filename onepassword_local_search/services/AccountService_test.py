@@ -13,10 +13,13 @@ def test_available_accounts_team_only():
 
 
 @pytest.mark.usefixtures("op_personal_session")
-def test_available_accounts_personal_only():
-    accounts = AccountService(StorageService(), ConfigFileService()).accounts
-    assert len(accounts) == 1
-    assert accounts[0]['shorthand'] == 'my'
+def test_available_accounts_personal_only(capsys):
+    with pytest.raises(SystemExit) as exit_code:
+        accounts = AccountService(StorageService(), ConfigFileService()).accounts
+    std = capsys.readouterr()
+    assert std.out.find('Environment variable OP_SESSION_team is not set') != -1
+    assert exit_code.type == SystemExit
+    assert exit_code.value.code == 1
 
 
 @pytest.mark.usefixtures("op_dual_session")
@@ -30,21 +33,12 @@ def test_available_accounts_dual_session():
 @pytest.mark.usefixtures("op_dual_session")
 def test_available_vaults_dual_session():
     vaults = AccountService(StorageService(), ConfigFileService()).available_vaults
-    assert len(vaults) == 5
-    assert sorted([vault['uuid'] for vault in vaults]) == ['76wwtsp754t434wt45jrio627q', 'jih4mxjnvmpcollannoie5gt4u',
- 'rloeunbmcvvniz7wedijvqhnhu', 'wbt4wkbfztldfolbdfyo2rnfdu', 'zcud5s5loxyjcaig545zwkxe2i']
-
-
-@pytest.mark.usefixtures("op_personal_session")
-def test_available_vaults_dual_session():
-    vaults = AccountService(StorageService(), ConfigFileService()).available_vaults
-    assert len(vaults) == 1
-    assert sorted([vault['uuid'] for vault in vaults]) == ['zcud5s5loxyjcaig545zwkxe2i']
+    assert len(vaults) == 4
+    assert sorted([vault['uuid'] for vault in vaults]) == ['jih4mxjnvmpcollannoie5gt4u', 'rloeunbmcvvniz7wedijvqhnhu', 'wbt4wkbfztldfolbdfyo2rnfdu', 'zcud5s5loxyjcaig545zwkxe2i']
 
 
 @pytest.mark.usefixtures("op_session")
-def test_available_vaults_dual_session():
+def test_available_vaults_main_session():
     vaults = AccountService(StorageService(), ConfigFileService()).available_vaults
-    assert len(vaults) == 4
-    assert sorted([vault['uuid'] for vault in vaults]) == ['76wwtsp754t434wt45jrio627q', 'jih4mxjnvmpcollannoie5gt4u',
- 'rloeunbmcvvniz7wedijvqhnhu', 'wbt4wkbfztldfolbdfyo2rnfdu']
+    assert len(vaults) == 3
+    assert sorted([vault['uuid'] for vault in vaults]) == ['jih4mxjnvmpcollannoie5gt4u', 'rloeunbmcvvniz7wedijvqhnhu', 'wbt4wkbfztldfolbdfyo2rnfdu']

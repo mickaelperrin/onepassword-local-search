@@ -2,6 +2,8 @@ from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.models.Item import Item
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
+from onepassword_local_search.services.AccountService import AccountService
+from onepassword_local_search.exceptions.ManagedException import ManagedException
 import string
 
 
@@ -10,11 +12,12 @@ class OnePassword:
     storageService: StorageService
     cryptoService: CryptoService
     configFileService: ConfigFileService
+    accountService: AccountService
 
     def __init__(self, custom_uuid_mapping=None):
         self.storageService = StorageService(custom_uuid_mapping)
         self.configFileService = ConfigFileService()
-        self.cryptoService = CryptoService(self.storageService, self.configFileService)
+        self.accountService = AccountService(self.storageService, self.configFileService)
         if custom_uuid_mapping:
             self._ensure_uuid_mapping_has_values()
 
@@ -22,9 +25,16 @@ class OnePassword:
         if not self.storageService.uuid_mapping_has_entries():
             self.mapping_update()
 
+    def can_decrypt(self, item):
+        return item.vaultId in self.accountService.available_vaults_id
+
     def get(self, uuid, field=None, custom_mapping=None, output=True):
         encrypted_item = Item(self.storageService.get_item_by_uuid(uuid, custom_mapping))
-        item = self.cryptoService.decrypt_item(encrypted_item)
+        if not self.can_decrypt(encrypted_item):
+            print('You are not connected to the required account to decrypt item: %s' % uuid)
+            exit(1)
+        decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
+        item = decryptor.decrypt_item(encrypted_item)
         decrypted_field = item.get(field, output=output)
         if output:
             print(decrypted_field, end='')
@@ -32,8 +42,10 @@ class OnePassword:
 
     def get_items(self, result_fitler):
         items = []
-        for item in self.storageService.list(self.configFileService.get_user_uuid()):
-            decrypted_item = self.cryptoService.decrypt_item(Item(item))
+        for item in self.storageService.list(self.accountService.get_available_accounts_id()):
+            encrypted_item = Item(item)
+            decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
+            decrypted_item = decryptor.decrypt_item(encrypted_item)
             if result_fitler is None or result_fitler in decrypted_item.overview['title']:
                 items.append(decrypted_item)
         return items
@@ -56,8 +68,10 @@ class OnePassword:
 
     def mapping_update(self):
         self.storageService.truncate_uuid_mapping_table()
-        for item in self.storageService.list(self.configFileService.get_user_uuid()):
-            decrypted_item = self.cryptoService.decrypt_item(Item(item))
+        for item in self.storageService.list(self.accountService.get_available_accounts_id()):
+            encrypted_item = Item(item)
+            decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
+            decrypted_item = decryptor.decrypt_item(encrypted_item)
             custom_uuid = decrypted_item.get('UUID', strict=False)
             lastpass_uuid = decrypted_item.get('LASTPASS_ID', strict=False)
             if custom_uuid:
@@ -75,5 +89,14 @@ class OnePassword:
         from .__version__ import __version__
         print('Version: ' + __version__)
 
-    def is_authenticated(self):
-        return self.cryptoService.is_authenticated()
+    def is_authenticated(self, user_uuids=None):
+        if user_uuids is None:
+            user_uuids = [self.configFileService.get_user_uuid_from_latest_signin()]
+        if isinstance(user_uuids, str):
+            user_uuids = [user_uuids]
+        for user_uuid in user_uuids:
+            account_id = self.storageService.get_account_id_from_user_uuid(user_uuid)
+            if account_id in self.accountService.cryptoServices.keys():
+                if not self.accountService.cryptoServices[account_id].is_authenticated():
+                    return False
+        return True

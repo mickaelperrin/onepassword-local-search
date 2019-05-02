@@ -130,13 +130,21 @@ class StorageService:
         query = "select enc_vault_key from vault_access where vault_id=%s and account_id=%s;" % (vault_id, account_id)
         return self.cur.execute(query).fetchone()['enc_vault_key']
 
-    def list(self, user_uuid):
-        account_id = self.get_account_id_from_user_uuid(user_uuid)
-        query = "select * from items where trashed=0 and vault_id in (select vault_id from vault_access where account_id=%s)" % account_id
+    def list(self, account_ids):
+        query = "select * from items where trashed=0 and vault_id in (select vaults.id from vault_access, vaults where vaults.type != 'E' and vaults.id == vault_access.vault_id and vault_access.account_id IN (%s))" % ','.join(account_ids)
         return self.cur.execute(query).fetchall()
 
     def get_vaults_owned_by_accounts(self, accounts=None):
         if accounts is None or accounts == []:
             return None
-        query = "select * from vault_access, vaults where vault_access.account_id IN (%s) and vaults.id == vault_access.vault_id;" % ','.join(accounts)
+        # currently we don't support type E
+        query = "select * from vault_access, vaults where vaults.type != 'E' and vault_access.account_id IN (%s) and vaults.id == vault_access.vault_id;" % ','.join(accounts)
         return self.cur.execute(query).fetchall()
+
+    def get_user_uuid_from_account_id(self, account_id):
+        query = "select user_uuid from accounts where id='%s';" % account_id
+        return self.cur.execute(query).fetchone()['user_uuid']
+
+    def get_main_user_uuid(self):
+        query = "select user_uuid from accounts order by id asc limit 1"
+        return self.cur.execute(query).fetchone()['user_uuid']

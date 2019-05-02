@@ -34,7 +34,7 @@ class ConfigFileService:
             exit(1)
         return self.config.get('latest_signin')
 
-    def get_user_uuid(self):
+    def get_user_uuid_from_latest_signin(self):
         for account in self.config['accounts']:
             if account['shorthand'] != self.get_latest_signin():
                 continue
@@ -43,3 +43,10 @@ class ConfigFileService:
 
     def get_accounts(self):
         return self.config['accounts']
+
+    def get_shorthand_from_user_uuid(self, user_uuid):
+        for account in self.config['accounts']:
+            if account['userUUID'] == user_uuid:
+                return account['shorthand']
+        raise Exception('Unable to find shorthand for account with user uuid %s' % user_uuid)
+

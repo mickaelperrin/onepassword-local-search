@@ -18,7 +18,7 @@ def common_data(item):
         personal_login_uuid='jgnp5odpifg2rhg4au2crq3v2y',
         subdomain='onepassword_local_search',
         session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI',
-        personal_session_key='PZzU_dhGL_EjKj6zqKnS5V2tmPI5cubi6ATVSfiX26k',
+        personal_session_key='BzaQO_o03hyCr4sF9LQplEzn9lmVBwyPIzA2rPqdaQs',
         session_filename='.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'
     ).get(item)
 
@@ -78,10 +78,3 @@ def storage_service(monkeypatch):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     return StorageService()
 
-
-@pytest.mark.usefixtures("op_session")
-@pytest.fixture
-def crypto_service(mocker):
-    mocker.patch.object(CryptoService, '_get_encrypted_session_file_path')
-    CryptoService._get_encrypted_session_file_path.return_value = os_path.join(os_path.dirname(os_path.dirname(__file__, )), 'tests', '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w')
-    return CryptoService(StorageService(), ConfigFileService())

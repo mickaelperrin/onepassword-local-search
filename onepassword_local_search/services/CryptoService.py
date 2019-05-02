@@ -10,29 +10,34 @@ import sys
 
 class CryptoService:
 
+    accountId: int
     storageService: StorageService
     sessionKey: str
     encryptedSessionPrivateKey: Cipher
-    encyptedSymmetricyKey: Cipher
+    encryptedSymmetricyKey: Cipher
     encryptedAccountKey: Cipher
-    ecnryptedPrivateKey: Cipher
+    encryptedPrivateKey: Cipher
     configFileService: ConfigFileService
     accountKey: dict
     symmetricKey: dict
     privateKey: dict
     privateKeyRaw: str
+    shorthand: str
+    userUUID: str
     vaultKeys: dict = {}
 
-    def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService):
+    def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService, account_id):
         self.storageService = storage_service
         self.configFileService = config_file_service
+        self.userUUID = self.storageService.get_user_uuid_from_account_id(account_id)
+        self.shorthand = self.configFileService.get_shorthand_from_user_uuid(self.userUUID)
 
     def _get_base_keys(self):
         self.sessionKey = self._get_session_key()
         self.encryptedSessionPrivateKey = self._get_encrypted_session_key()
         self.sessionPrivateKey = json_loads(self.decrypt(self.sessionKey, self.encryptedSessionPrivateKey))
-        self.encyptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
-        self.symmetricKey = json_loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encyptedSymmetricyKey))
+        self.encryptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
+        self.symmetricKey = json_loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encryptedSymmetricyKey))
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
         self.accountKey = json_loads(self.decrypt(self.symmetricKey['k'], self.encryptedAccountKey))
         self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
@@ -40,11 +45,10 @@ class CryptoService:
         self.privateKey = json_loads(self.privateKeyRaw)
 
     def _get_session_key(self):
-        latest_signin = self.configFileService.get_latest_signin()
-        if not os_environ.get('OP_SESSION_' + latest_signin):
-            print('Environment variable OP_SESSION_team is not set.')
+        if not os_environ.get('OP_SESSION_' + self.shorthand):
+            print('Environment variable OP_SESSION_team is not set for %s ' % self.shorthand)
             exit(1)
-        return os_environ.get('OP_SESSION_' + latest_signin)
+        return os_environ.get('OP_SESSION_' + self.shorthand)
 
     def _get_encrypted_session_directory_path(self):
         if os_environ.get('OP_SESSION_PRIVATE_KEY_FOLDER'):
@@ -72,16 +76,20 @@ class CryptoService:
         with open(self._get_encrypted_session_file_path()) as f:
             return Cipher(f.read())
 
+    def _get_encrypted_user_symmetric_key(self):
+        account_id = self.storageService.get_account_id_from_user_uuid(self.userUUID)
+        return self.storageService.get_encrypted_symmetric_key(account_id)
+
     def _get_encrypted_symmetric_key(self):
-        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        account_id = self.storageService.get_account_id_from_user_uuid(self.userUUID)
         return self.storageService.get_encrypted_symmetric_key(account_id)
 
     def _get_encrypted_account_key(self):
-        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        account_id = self.storageService.get_account_id_from_user_uuid(self.userUUID)
         return self.storageService.get_account_key(account_id)
 
     def _get_encrypted_private_key(self):
-        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        account_id = self.storageService.get_account_id_from_user_uuid(self.userUUID)
         return self.storageService.get_encrypted_private_key(account_id)
 
     def decrypt(self, key, cipher: Cipher):
@@ -94,7 +102,7 @@ class CryptoService:
     def _get_vault_key(self, vault_id):
         if not hasattr(self, 'privateKeyRaw') or not self.privateKeyRaw:
             self._get_base_keys()
-        account_id = self.storageService.get_account_id_from_user_uuid(self.configFileService.get_user_uuid())
+        account_id = self.storageService.get_account_id_from_user_uuid(self.userUUID)
         encrypted_vault_key = json_loads(self.storageService.get_encrypted_vault_key(vault_id, account_id))
         return json_loads(rsa_decrypt(self.privateKeyRaw, encrypted_vault_key['data']).decode('utf-8'))
 
