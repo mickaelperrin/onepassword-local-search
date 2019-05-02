@@ -15,6 +15,7 @@ class AccountService:
         self.configFileService = config_file_service
         self.existing_accounts = self.configFileService.get_accounts()
         self.accounts = self.get_available_accounts()
+        self.available_vaults = self.get_available_vaults()
 
     def get_available_accounts(self):
         accounts = []
@@ -26,6 +27,9 @@ class AccountService:
                 account['id'] = account_id
                 accounts.append(account)
         return accounts
+
+    def get_available_vaults(self):
+        return self.storageService.get_vaults_owned_by_accounts([str(account['id']) for account in self.accounts])
 
 
 

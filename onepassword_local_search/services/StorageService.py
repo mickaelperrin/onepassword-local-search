@@ -134,3 +134,9 @@ class StorageService:
         account_id = self.get_account_id_from_user_uuid(user_uuid)
         query = "select * from items where trashed=0 and vault_id in (select vault_id from vault_access where account_id=%s)" % account_id
         return self.cur.execute(query).fetchall()
+
+    def get_vaults_owned_by_accounts(self, accounts=None):
+        if accounts is None or accounts == []:
+            return None
+        query = "select * from vault_access, vaults where vault_access.account_id IN (%s) and vaults.id == vault_access.vault_id;" % ','.join(accounts)
+        return self.cur.execute(query).fetchall()
