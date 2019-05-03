@@ -78,7 +78,9 @@ is directly impacted by how far your are from their servers.
 
 ## Benchmarks
 
-### Official op cli 1m23s
+### Get command
+
+#### Official op cli 1m23s
 
 > Performance may depends on how far you are of a 1Password data-center. I live in South of France, nearest is Frankfurt.
 
@@ -108,33 +110,42 @@ op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,50s user 2,09s system 84%
 
 ```
 
-### op-local 2,65s (31x faster)
+#### op-local 3,5s (23x faster)
 
 ```
-time (for i in {1..20}; do IDS=('zzfmhu2j7ajq55mmpm3ihs3oqy' 'n3iopimevz3pddels3dgfwyp2a' ) FIELDS=('password' 'title'); eval "timeget ${IDS[$((RANDOM % ${#IDS[@]}+1))]} ${FIELDS[$((RANDOM % ${#FIELDS[@]}+1))]} > /dev/null"; done)
-op-local get n3iopimevz3pddels3dgfwyp2a password > /dev/null  0,10s user 0,02s system 98% cpu 0,121 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy password > /dev/null  0,10s user 0,02s system 98% cpu 0,127 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy password > /dev/null  0,11s user 0,02s system 98% cpu 0,136 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,10s user 0,02s system 98% cpu 0,127 total
-op-local get n3iopimevz3pddels3dgfwyp2a password > /dev/null  0,11s user 0,02s system 97% cpu 0,131 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,11s user 0,02s system 98% cpu 0,137 total
-op-local get n3iopimevz3pddels3dgfwyp2a title > /dev/null  0,11s user 0,02s system 97% cpu 0,136 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy password > /dev/null  0,11s user 0,02s system 98% cpu 0,128 total
-op-local get n3iopimevz3pddels3dgfwyp2a password > /dev/null  0,11s user 0,02s system 97% cpu 0,132 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,11s user 0,02s system 98% cpu 0,138 total
-op-local get n3iopimevz3pddels3dgfwyp2a title > /dev/null  0,11s user 0,02s system 97% cpu 0,140 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,10s user 0,02s system 98% cpu 0,126 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy password > /dev/null  0,11s user 0,02s system 97% cpu 0,127 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,12s user 0,02s system 98% cpu 0,140 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,11s user 0,02s system 98% cpu 0,136 total
-op-local get n3iopimevz3pddels3dgfwyp2a password > /dev/null  0,11s user 0,02s system 97% cpu 0,129 total
-op-local get n3iopimevz3pddels3dgfwyp2a title > /dev/null  0,11s user 0,02s system 98% cpu 0,128 total
-op-local get n3iopimevz3pddels3dgfwyp2a password > /dev/null  0,11s user 0,02s system 98% cpu 0,138 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy title > /dev/null  0,11s user 0,02s system 98% cpu 0,131 total
-op-local get zzfmhu2j7ajq55mmpm3ihs3oqy password > /dev/null  0,11s user 0,02s system 97% cpu 0,133 total
-( for i in {1..20}; do; IDS=('zzfmhu2j7ajq55mmpm3ihs3oqy' ) FIELDS=('password)  2,18s user 0,42s system 98% cpu 2,645 total
+ time (for i in {1..20}; do IDS=('gzikfbpysjwsqdagcgxcwqmmxe' 'jfcpk2cpgxarvrhlatca7tsyui' 'osk6bqktonuxjm4qgqxs2tpz6a' 'dytzaelqvqrmhfstscb67geuly' ) FIELDS=('password' 'title'); eval "time op-local get ${IDS[$((RANDOM % ${#IDS[@]}+1))]} ${FIELDS[$((RANDOM % ${#FIELDS[@]}+1))]} > /dev/null"; done)
+op-local get dytzaelqvqrmhfstscb67geuly title > /dev/null  0,13s user 0,03s system 97% cpu 0,165 total
+op-local get gzikfbpysjwsqdagcgxcwqmmxe password > /dev/null  0,14s user 0,04s system 98% cpu 0,175 total
+op-local get dytzaelqvqrmhfstscb67geuly title > /dev/null  0,14s user 0,03s system 98% cpu 0,176 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a password > /dev/null  0,13s user 0,03s system 98% cpu 0,170 total
+op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,14s user 0,04s system 98% cpu 0,175 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a password > /dev/null  0,14s user 0,04s system 98% cpu 0,178 total
+op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,13s user 0,03s system 98% cpu 0,168 total
+op-local get jfcpk2cpgxarvrhlatca7tsyui title > /dev/null  0,13s user 0,03s system 98% cpu 0,169 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,13s user 0,03s system 97% cpu 0,171 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a password > /dev/null  0,13s user 0,04s system 98% cpu 0,173 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,14s user 0,04s system 98% cpu 0,173 total
+op-local get jfcpk2cpgxarvrhlatca7tsyui title > /dev/null  0,14s user 0,03s system 97% cpu 0,176 total
+op-local get gzikfbpysjwsqdagcgxcwqmmxe password > /dev/null  0,13s user 0,03s system 97% cpu 0,171 total
+op-local get dytzaelqvqrmhfstscb67geuly password > /dev/null  0,14s user 0,03s system 97% cpu 0,174 total
+op-local get jfcpk2cpgxarvrhlatca7tsyui password > /dev/null  0,14s user 0,04s system 98% cpu 0,179 total
+op-local get dytzaelqvqrmhfstscb67geuly title > /dev/null  0,14s user 0,04s system 97% cpu 0,181 total
+op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,14s user 0,04s system 97% cpu 0,179 total
+op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,14s user 0,04s system 98% cpu 0,178 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,14s user 0,04s system 98% cpu 0,182 total
+op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,15s user 0,04s system 97% cpu 0,188 total
+( for i in {1..20}; do; IDS=('gzikfbpysjwsqdagcgxcwqmmxe'   ) FIELDS=( 'title)  2,74s user 0,71s system 98% cpu 3,509 total
 
+```
 
+### List command
+
+#### 0,7s to list and decrypt 1877 entries
+```
+time op-local list | wc -l
+    1877
+op-local list  0,68s user 0,05s system 99% cpu 0,741 total
+wc -l  0,00s user 0,00s system 0% cpu 0,740 total
 ```
 
 
