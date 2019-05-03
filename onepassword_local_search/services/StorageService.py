@@ -64,6 +64,8 @@ class StorageService:
         return self.cur.execute(query).fetchone()['nb']
 
     def get_item_by_uuid(self, uuid, custom_uuid_mapping=None):
+        if custom_uuid_mapping is None:
+            custom_uuid_mapping = self.custom_uuid_mapping
         if custom_uuid_mapping == 'UUID':
             query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE custom_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
         elif custom_uuid_mapping == 'LASTPASS':
