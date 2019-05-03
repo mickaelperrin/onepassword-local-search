@@ -57,6 +57,17 @@ You can now get an item using your own `UUID` by appending the `--use-custom-uui
 
 You can display UUID mapping by running `op-local mapping list`.
 
+### Multiple accounts
+
+This project support multi-accounts decryption. However, keep in mind that you need:
+
+- to authenticate with the main account of your 1Password desktop client
+- to authenticate with the others accounts you want to use
+
+## Known limitations
+
+- Currently, vaults of type E (family shared ?) are not supported.
+
 ## Why this project ?
 
 We use Ansible to manage infrastructures and use a lookup plugin to grab hundred of secrets. 
