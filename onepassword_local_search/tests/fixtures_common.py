@@ -28,6 +28,8 @@ def no_op_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     if environ.get('OP_SESSION_' + common_data('subdomain')):
         monkeypatch.delenv('OP_SESSION_' + common_data('subdomain'))
+    if environ.get('OP_SESSION_my'):
+        monkeypatch.delenv('OP_SESSION_my')
     mocker.patch.object(ConfigFileService, '_get_local_config')
     with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
         config = f.read()
@@ -40,6 +42,8 @@ def op_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
     monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
+    if environ.get('OP_SESSION_my'):
+        monkeypatch.delenv('OP_SESSION_my')
     mocker.patch.object(ConfigFileService, '_get_local_config')
     with open(os_path.join(os_path.dirname(__file__), 'config'), 'r') as f:
         config = f.read()
@@ -50,6 +54,8 @@ def op_session(monkeypatch, mocker):
 @pytest.fixture
 def op_personal_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    if environ.get('OP_SESSION_my'):
+        monkeypatch.delenv('OP_SESSION_my')
     monkeypatch.setenv('OP_SESSION_my', common_data('personal_session_key'))
     monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
     mocker.patch.object(ConfigFileService, '_get_local_config')
@@ -63,6 +69,8 @@ def op_personal_session(monkeypatch, mocker):
 @pytest.fixture
 def op_dual_session(monkeypatch, mocker):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    if environ.get('OP_SESSION_my'):
+        monkeypatch.delenv('OP_SESSION_my')
     monkeypatch.setenv('OP_SESSION_my', common_data('personal_session_key'))
     monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
     monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
