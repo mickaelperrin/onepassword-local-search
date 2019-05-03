@@ -49,7 +49,6 @@ class StorageService:
                   """ % (StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name,
                          StorageService.uuid_mapping_table_name, StorageService.uuid_mapping_table_name,
                          StorageService.uuid_mapping_table_name)
-        print(request)
         return self.con.executescript(request)
 
     def truncate_uuid_mapping_table(self):
