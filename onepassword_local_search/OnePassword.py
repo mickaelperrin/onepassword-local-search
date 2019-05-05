@@ -90,6 +90,11 @@ class OnePassword:
         print('Version: ' + __version__)
 
     def is_authenticated(self, user_uuids=None):
+        try:
+            if self.accountService.cryptoServices == {}:
+                self.accountService.cryptoServices = self.accountService.set_crypto_services()
+        except Exception:
+            pass
         if user_uuids is None:
             user_uuids = [self.configFileService.get_user_uuid_from_latest_signin()]
         if isinstance(user_uuids, str):

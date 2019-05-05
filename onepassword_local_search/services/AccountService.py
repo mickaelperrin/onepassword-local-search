@@ -11,7 +11,7 @@ class AccountService:
     existing_accounts: []
     storageService: StorageService
     configFileService: ConfigFileService
-    cryptoServices: {}
+    cryptoServices: {} = {}
 
     def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService):
         self.storageService = storage_service
@@ -20,7 +20,6 @@ class AccountService:
         self.accounts = self.get_available_accounts()
         self.available_vaults = self.get_available_vaults()
         self.available_vaults_id = self.get_available_vaults_id()
-        self.cryptoServices = self.set_crypto_services()
 
     def get_available_accounts(self):
         accounts = []
@@ -58,6 +57,8 @@ class AccountService:
         return self.cryptoServices['1']
 
     def get_decryptor(self, vaultId):
+        if self.cryptoServices == {}:
+            self.cryptoServices = self.set_crypto_services()
         for vault in self.available_vaults:
             if vaultId == vault['id']:
                 account_id = vault['account_id']

@@ -12,16 +12,6 @@ def test_available_accounts_team_only():
     assert accounts[0]['shorthand'] == 'onepassword_local_search'
 
 
-@pytest.mark.usefixtures("op_personal_session")
-def test_available_accounts_personal_only(capsys):
-    with pytest.raises(SystemExit) as exit_code:
-        accounts = AccountService(StorageService(), ConfigFileService()).accounts
-    std = capsys.readouterr()
-    assert std.out.find('Environment variable OP_SESSION_team is not set') != -1
-    assert exit_code.type == SystemExit
-    assert exit_code.value.code == 1
-
-
 @pytest.mark.usefixtures("op_dual_session")
 def test_available_accounts_dual_session():
     accounts = AccountService(StorageService(), ConfigFileService()).accounts
