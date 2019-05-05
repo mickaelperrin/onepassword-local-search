@@ -1,8 +1,10 @@
 from sys import exit
+from onepassword_local_search.exceptions.Hook import exception_handler
 from onepassword_local_search.exceptions.ManagedException import ManagedException
 from onepassword_local_search.OnePassword import OnePassword
 from argparse import ArgumentParser, Namespace
 import sys
+sys.excepthook = exception_handler
 
 
 class CliSimple:
