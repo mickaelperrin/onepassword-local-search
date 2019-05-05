@@ -102,6 +102,11 @@ class OnePassword:
         for user_uuid in user_uuids:
             account_id = self.storageService.get_account_id_from_user_uuid(user_uuid)
             if account_id in self.accountService.cryptoServices.keys():
-                if not self.accountService.cryptoServices[account_id].is_authenticated():
+                try:
+                    if not self.accountService.cryptoServices[account_id].is_authenticated():
+                        return False
+                except:
                     return False
+            else:
+                return False
         return True
