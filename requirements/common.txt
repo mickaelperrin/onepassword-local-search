@@ -1,2 +1,3 @@
 cryptography==2.6.1
 pyjwkest==1.4.0
+pyotp==2.2.7

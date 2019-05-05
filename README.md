@@ -17,10 +17,16 @@ The script will try to search the database at standard path depending on your pl
 to use another database, you could set the env variable ONEPASSWORD_LOCAL_DATABASE_PATH with the path 
 of the B5.sqlite database you want to use. 
 
-### Get decrypted valued
+### Get decrypted value
 ```
 op-local get uuid [field] [--use-custom-uuid] [--use-lastpass-uuid]
 ```
+
+#### TOTP
+
+If you have created a field untitled "One-time password" with a field type "One time password", you can retrieve the
+value of the totp by using the special field `totp`. For example: `op-local get uuid totp`.
+
 
 ### List items
 ```

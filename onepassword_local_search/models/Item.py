@@ -46,7 +46,9 @@ class Item:
         path = field.split(';;')
         out = None
 
-        if field in ['title', 'url']:
+        if field == 'totp':
+          out = self.get_totp()
+        elif field in ['title', 'url']:
             out = self.overview.get(field)
         elif field in ['username', 'password'] and (out is None or out == ''):
             out = self.details.get(field)
@@ -83,3 +85,12 @@ class Item:
             return content
         else:
             return json_dumps(content.__dict__)
+
+    def get_totp(self):
+        import pyotp
+        token = self._search_recursive_in_sections('One-time password')
+        if token:
+            return pyotp.TOTP(token).now()
+        else:
+            raise Exception('Item %s doesn\'t seem to have a field untitled "One-time password"' % self.uuid)
+

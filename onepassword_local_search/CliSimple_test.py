@@ -48,6 +48,22 @@ def test_get_login_title(capsys):
 
 
 @pytest.mark.usefixtures("op_session")
+def test_get_no_totp(capsys):
+    with pytest.raises(Exception) as exit_code:
+        CliSimple('script', 'get', common_data('item_uuid'), 'totp').run()
+    assert exit_code.match("Item e25haqmocd5ifiymorfzwxnzry doesn't seem to have a field untitled \"One-time password\"")
+
+
+@pytest.mark.usefixtures("op_session")
+def test_get_login_totp(capsys):
+    import pyotp
+    totp = pyotp.TOTP('EGUUASD55RTXQAL4CAI43HGGM673NUUU')
+    CliSimple('script', 'get', common_data('login_uuid'), 'totp').run()
+    std = capsys.readouterr()
+    assert std.out == totp.now()
+
+
+@pytest.mark.usefixtures("op_session")
 def test_get_login_uuid(capsys):
     CliSimple('script', 'get', common_data('login_uuid'), 'uuid').run()
     std = capsys.readouterr()
