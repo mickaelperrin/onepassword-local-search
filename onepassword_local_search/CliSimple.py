@@ -74,5 +74,6 @@ class CliSimple:
         return OnePassword.version()
 
     def is_authenticated(self):
-        return self.onePassword.is_authenticated()
+        if not self.onePassword.is_authenticated():
+            sys.exit(1)
 
