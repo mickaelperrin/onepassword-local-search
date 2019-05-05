@@ -90,7 +90,7 @@ class Item:
         import pyotp
         token = self._search_recursive_in_sections('One-time password')
         if token:
-            return pyotp.TOTP(token).now()
+            return pyotp.TOTP(token.replace(' ', '')).now()
         else:
             raise Exception('Item %s doesn\'t seem to have a field untitled "One-time password"' % self.uuid)
 
