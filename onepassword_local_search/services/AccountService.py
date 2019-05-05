@@ -2,6 +2,7 @@ from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.services.SecondaryCryptoService import SecondaryCryptoService
+from sys import stderr
 from os import environ as os_environ
 
 
@@ -45,12 +46,28 @@ class AccountService:
 
     def set_crypto_services(self):
         services = {}
-        for account in self.accounts:
-            if self.is_main_account(account):
-                crypto_class = CryptoService
-            else:
-                crypto_class = SecondaryCryptoService
-            services[account['id']] = crypto_class(self.storageService, self.configFileService, account['id'])
+        not_logged_accounts = []
+        try:
+            for account in self.accounts:
+                if self.is_main_account(account):
+                    crypto_class = CryptoService
+                else:
+                    crypto_class = SecondaryCryptoService
+                try:
+                    services[account['id']] = crypto_class(self.storageService, self.configFileService, account['id'])
+                except Exception:
+                    not_logged_accounts.append(account)
+                    pass
+            if len(not_logged_accounts) > 0:
+                raise Exception('Not authenticated')
+        except Exception:
+            for account in not_logged_accounts:
+                if account['shorthand'] == 'my':
+                    over = 'your personal account'
+                else:
+                    over = 'the team %s' % account['shorthand']
+                print('You are not authenticated over "%s"' % over, file=stderr)
+            raise
         return services
 
     def get_main_crypto_service(self):
