@@ -15,32 +15,35 @@ class CliSimple:
 
     def __init__(self, *args):
 
-        parser = ArgumentParser()
+        parser = ArgumentParser(prog='op-local', description='Performs get/list operations over the local 1Password database')
         subparsers = parser.add_subparsers(dest='command')
 
-        action_get = subparsers.add_parser('get')
+        action_get = subparsers.add_parser('get', help='retrieve a single field/object given a uuid')
         action_get.add_argument('uuid', help='uuid to fetch')
         action_get.add_argument('field', help='field to retrieve', nargs='?', default=None)
         action_get.add_argument('--use-custom-uuid', help='use custom UUID mapping', nargs='?', default=False, const=True)
         action_get.add_argument('--use-lastpass-uuid', help='use LastPass UUID mapping', nargs='?', default=False, const=True)
 
-        action_list = subparsers.add_parser('list')
+        action_list = subparsers.add_parser('list', help='list all available entries')
         action_list.add_argument('--format', help='custom format string')
         action_list.add_argument('--filter', help='filter over title entry')
 
-        action_is_authenticated = subparsers.add_parser('is-authenticated')
+        action_is_authenticated = subparsers.add_parser('is-authenticated', help='check if authenticated locally')
 
         action_version = subparsers.add_parser('version')
 
-        action_update_mapping = subparsers.add_parser('mapping')
+        action_update_mapping = subparsers.add_parser('mapping', help='operations on uuid mapping')
         action_update_mapping.add_argument('subcommand', help='update or list', choices=['list', 'update'])
         action_update_mapping.add_argument('--use-lastpass-uuid', help='list using lastpass uuid', nargs='?', default=False, const=True)
 
         self.args = parser.parse_args(args[1:])
 
+        if self.args.command is None:
+            parser.print_help()
+
     def run(self):
         try:
-            if self.args.command == 'version':
+            if self.args.command is None or self.args.command == 'version':
                 return self.version()
             custom_uuid_mapping = None
             if hasattr(self.args, 'use_custom_uuid') and self.args.use_custom_uuid:

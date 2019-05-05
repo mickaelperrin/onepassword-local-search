@@ -12,6 +12,14 @@ def cli_version():
 
 
 @pytest.mark.usefixtures("no_op_session")
+def test_usage(capsys):
+    CliSimple('script').run()
+    std = capsys.readouterr()
+    assert 'Version: ' + __version__ in std.out
+    assert 'usage: ' in std.out
+
+
+@pytest.mark.usefixtures("no_op_session")
 def test_version(cli_version, capsys):
     cli_version.run()
     std = capsys.readouterr()
