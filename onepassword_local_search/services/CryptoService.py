@@ -69,7 +69,7 @@ class CryptoService:
                 return path
         filepath = os_path.join(self._get_encrypted_session_directory_path(), determine_session_file_path_from_session_key(self.sessionKey))
         if not os_path.isfile(filepath):
-            raise Exception('Unable to find session file at %s' % filepath)
+            raise Exception('Unable to find session file')
         return filepath
 
     def _get_encrypted_session_key(self):
