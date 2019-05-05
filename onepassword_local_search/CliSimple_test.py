@@ -26,6 +26,27 @@ def test_version(cli_version, capsys):
     assert std.out == 'Version: ' + __version__ + nl
 
 
+@pytest.mark.usefixtures("op_dual_session")
+def test_check_cache():
+    import os
+    import glob
+    for file in glob.glob(os.path.join(os.path.dirname(__file__), 'tests', '.*_cache')):
+        os.unlink(file)
+    CliSimple('script', 'get', common_data('item_uuid'), 'title').run()
+    assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.ValshXBMgxdeEu3G90_PBBq1Sq0_cached'))
+    assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w_cached'))
+
+
+@pytest.mark.usefixtures("op_dual_session")
+def test_check_cache_removal():
+    import os
+    import glob
+    for file in glob.glob(os.path.join(os.path.dirname(__file__), 'tests', '.*_cache')):
+        os.unlink(file)
+    CliSimple('script', 'get', common_data('item_uuid'), 'title').run()
+    CliSimple('script', '--disable-session-caching').run()
+    assert glob.glob(os.path.join(os.path.dirname(__file__), 'tests', '.*_cache')) == []
+
 @pytest.fixture
 def cli_get_uuid():
     return CliSimple('script', 'get', common_data('item_uuid'), 'password')

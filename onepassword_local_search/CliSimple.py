@@ -16,6 +16,8 @@ class CliSimple:
     def __init__(self, *args):
 
         parser = ArgumentParser(prog='op-local', description='Performs get/list operations over the local 1Password database')
+        parser.add_argument('--disable-session-caching', help='disable session caching. The session caching is required for multi accounts setups.', nargs='?', default=False,
+                                const=True)
         subparsers = parser.add_subparsers(dest='command')
 
         action_get = subparsers.add_parser('get', help='retrieve a single field/object given a uuid')
@@ -38,6 +40,10 @@ class CliSimple:
 
         self.args = parser.parse_args(args[1:])
 
+        if self.args.disable_session_caching:
+            from onepassword_local_search.services.CryptoService import CryptoService
+            CryptoService.cleanup_sessions_cache()
+
         if self.args.command is None:
             parser.print_help()
 
@@ -50,7 +56,7 @@ class CliSimple:
                 custom_uuid_mapping = 'UUID'
             elif hasattr(self.args, 'use_lastpass_uuid') and self.args.use_lastpass_uuid:
                 custom_uuid_mapping = 'LASTPASS'
-            self.onePassword = OnePassword(custom_uuid_mapping=custom_uuid_mapping)
+            self.onePassword = OnePassword(custom_uuid_mapping=custom_uuid_mapping, disable_session_caching=self.args.disable_session_caching)
             return getattr(self, self.args.command.replace('-', '_'))()
         except ManagedException as e:
             exit(e.args[0])

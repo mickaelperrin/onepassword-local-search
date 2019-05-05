@@ -3,7 +3,7 @@ from os import environ, path
 from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
-from os import path as os_path
+from os import path as os_path, unlink as os_unlink
 from pytest_mock import mocker
 from json import loads as json_loads
 
@@ -85,4 +85,5 @@ def op_dual_session(monkeypatch, mocker):
 def storage_service(monkeypatch):
     monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
     return StorageService()
+
 

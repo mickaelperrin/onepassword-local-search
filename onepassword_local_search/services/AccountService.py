@@ -10,17 +10,19 @@ class AccountService:
 
     accounts: []
     existing_accounts: []
+    disable_session_caching: bool
     storageService: StorageService
     configFileService: ConfigFileService
     cryptoServices: {} = {}
 
-    def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService):
+    def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService, disable_session_caching=False):
         self.storageService = storage_service
         self.configFileService = config_file_service
         self.existing_accounts = self.configFileService.get_accounts()
         self.accounts = self.get_available_accounts()
         self.available_vaults = self.get_available_vaults()
         self.available_vaults_id = self.get_available_vaults_id()
+        self.disable_session_caching = disable_session_caching
 
     def get_available_accounts(self):
         accounts = []

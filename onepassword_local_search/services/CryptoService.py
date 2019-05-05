@@ -5,13 +5,13 @@ from onepassword_local_search.lib.optestlib import aes_decrypt, get_binary_from_
 from os import environ as os_environ, path as os_path
 from json import loads as json_loads
 from glob import glob as glob_glob
-import sys
 
 
 class CryptoService:
 
     accountId: int
     storageService: StorageService
+    disable_session_caching: bool
     sessionKey: str
     encryptedSessionPrivateKey: Cipher
     encryptedSymmetricyKey: Cipher
@@ -26,11 +26,20 @@ class CryptoService:
     userUUID: str
     vaultKeys: dict = {}
 
-    def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService, account_id):
+    def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService, account_id, disable_session_caching=False):
         self.storageService = storage_service
         self.configFileService = config_file_service
         self.userUUID = self.storageService.get_user_uuid_from_account_id(account_id)
         self.shorthand = self.configFileService.get_shorthand_from_user_uuid(self.userUUID)
+        self.disable_session_caching = disable_session_caching
+        if self.disable_session_caching:
+            self.cleanup_sessions_cache()
+
+    @staticmethod
+    def cleanup_sessions_cache():
+        for file in glob_glob(os_path.join(CryptoService._get_encrypted_session_directory_path(), '.*_cached')):
+            import os
+            os.remove(file)
 
     def _get_base_keys(self):
         self.sessionKey = self._get_session_key()
@@ -50,7 +59,8 @@ class CryptoService:
             exit(1)
         return os_environ.get('OP_SESSION_' + self.shorthand)
 
-    def _get_encrypted_session_directory_path(self):
+    @staticmethod
+    def _get_encrypted_session_directory_path():
         if os_environ.get('OP_SESSION_PRIVATE_KEY_FOLDER'):
             path = os_environ.get('OP_SESSION_PRIVATE_KEY_FOLDER')
             if os_path.isdir(path):
@@ -68,8 +78,16 @@ class CryptoService:
             if os_path.isfile(path):
                 return path
         filepath = os_path.join(self._get_encrypted_session_directory_path(), determine_session_file_path_from_session_key(self.sessionKey))
-        if not os_path.isfile(filepath):
-            raise Exception('Unable to find session file')
+        if os_path.isfile(filepath):
+            if not os_path.isfile(filepath + '_cached') and not self.disable_session_caching:
+                from shutil import copyfile
+                copyfile(filepath, filepath + '_cached')
+        else:
+            filepath += '_cached'
+            if os_path.isfile(filepath):
+                return filepath
+            else:
+                raise Exception('Unable to find session file')
         return filepath
 
     def _get_encrypted_session_key(self):

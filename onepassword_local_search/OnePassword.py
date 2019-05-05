@@ -14,10 +14,10 @@ class OnePassword:
     configFileService: ConfigFileService
     accountService: AccountService
 
-    def __init__(self, custom_uuid_mapping=None):
+    def __init__(self, custom_uuid_mapping=None, disable_session_caching=False):
         self.storageService = StorageService(custom_uuid_mapping)
         self.configFileService = ConfigFileService()
-        self.accountService = AccountService(self.storageService, self.configFileService)
+        self.accountService = AccountService(self.storageService, self.configFileService, disable_session_caching=disable_session_caching)
         if custom_uuid_mapping:
             self._ensure_uuid_mapping_has_values()
 
