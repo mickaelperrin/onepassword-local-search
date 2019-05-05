@@ -32,7 +32,7 @@ def test_check_cache():
     import glob
     for file in glob.glob(os.path.join(os.path.dirname(__file__), 'tests', '.*_cache')):
         os.unlink(file)
-    CliSimple('script', 'get', common_data('item_uuid'), 'title').run()
+    CliSimple('script', 'list').run()
     assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.ValshXBMgxdeEu3G90_PBBq1Sq0_cached'))
     assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w_cached'))
 
