@@ -69,7 +69,7 @@ class StorageService:
         if self.custom_uuid_mapping is None and custom_uuid_mapping is None:
             if is_uuid(uuid):
                 custom_uuid_mapping = 'UUID'
-            elif re.match('[0-9]+', uuid):
+            elif re.match('^[0-9]+$', uuid):
                 custom_uuid_mapping = 'LASTPASS'
             else:
                 custom_uuid_mapping = self.custom_uuid_mapping
