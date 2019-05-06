@@ -31,8 +31,7 @@ class OnePassword:
     def get(self, uuid, field=None, custom_mapping=None, output=True):
         encrypted_item = Item(self.storageService.get_item_by_uuid(uuid, custom_mapping))
         if not self.can_decrypt(encrypted_item):
-            print('You are not connected to the required account to decrypt item: %s' % uuid)
-            exit(1)
+            raise Exception('You are not connected to the required account to decrypt item: %s' % uuid)
         decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
         item = decryptor.decrypt_item(encrypted_item)
         decrypted_field = item.get(field, output=output)

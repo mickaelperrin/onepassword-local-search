@@ -102,8 +102,7 @@ def opb64d(b64dat):
             try:
                 out = base64_b64decode(b64dat + '==', altchars='-_')
             except:
-                print("Problem b64 decoding string: %s" % (b64dat))
-                sys_exit(1)
+                raise Exception("Problem b64 decoding string: %s" % (b64dat))
     return out
 
 
@@ -117,8 +116,7 @@ def get_binary_from_string(str):
             try:
                 bin = base64_b64decode(str)
             except:
-                print("Unable to decode the input. Enter in hex or base64_")
-                sys_exit(1)
+                raise Exception("Unable to decode the input. Enter in hex or base64_")
     return bin
 
 

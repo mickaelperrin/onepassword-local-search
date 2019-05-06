@@ -55,8 +55,7 @@ class CryptoService:
 
     def _get_session_key(self):
         if not os_environ.get('OP_SESSION_' + self.shorthand):
-            print('Environment variable OP_SESSION_team is not set for %s ' % self.shorthand)
-            exit(1)
+            raise Exception('Environment variable OP_SESSION_team is not set for %s ' % self.shorthand)
         return os_environ.get('OP_SESSION_' + self.shorthand)
 
     @staticmethod
