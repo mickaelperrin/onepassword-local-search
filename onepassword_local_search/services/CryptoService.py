@@ -3,6 +3,7 @@ from onepassword_local_search.services.ConfigFileService import ConfigFileServic
 from onepassword_local_search.models.Cipher import Cipher
 from onepassword_local_search.lib.optestlib import aes_decrypt, get_binary_from_string, rsa_decrypt, determine_session_file_path_from_session_key
 from os import environ as os_environ, path as os_path
+from onepassword_local_search.exceptions.ManagedException import ManagedException
 from json import loads as json_loads
 from glob import glob as glob_glob
 

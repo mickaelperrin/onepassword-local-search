@@ -2,6 +2,7 @@ from onepassword_local_search.services.StorageService import StorageService
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.services.CryptoService import CryptoService
 from onepassword_local_search.services.SecondaryCryptoService import SecondaryCryptoService
+from onepassword_local_search.exceptions.ManagedException import ManagedException
 from sys import stderr
 from os import environ as os_environ
 

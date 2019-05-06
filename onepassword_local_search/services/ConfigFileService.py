@@ -1,5 +1,6 @@
 from os import environ as os_environ, path as os_path
 from json import load as json_load
+from onepassword_local_search.exceptions.ManagedException import ManagedException
 
 
 class ConfigFileService:
