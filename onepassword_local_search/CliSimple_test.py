@@ -77,6 +77,20 @@ def test_get_login_title(capsys):
 
 
 @pytest.mark.usefixtures("op_session")
+def test_get_login_title_auto_custom_uuid(capsys):
+    CliSimple('script', 'get', common_data('login_custom_uuid'), 'title').run()
+    std = capsys.readouterr()
+    assert std.out == 'Connexion'
+
+
+@pytest.mark.usefixtures("op_session")
+def test_get_login_title_auto_lastpass_uuid(capsys):
+    CliSimple('script', 'get', common_data('login_lastpass_uuid'), 'title').run()
+    std = capsys.readouterr()
+    assert std.out == 'Connexion'
+
+
+@pytest.mark.usefixtures("op_session")
 def test_get_no_totp(capsys):
     with pytest.raises(Exception) as exit_code:
         CliSimple('script', 'get', common_data('item_uuid'), 'totp').run()

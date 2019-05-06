@@ -63,6 +63,9 @@ You can now get an item using your own `UUID` by appending the `--use-custom-uui
 
 You can display UUID mapping by running `op-local mapping list`.
 
+Since 0.16, and as, UUID v4, Lastpass ID and 1Password UUID are totally different, the search will be performed
+over the adequate field regarding which type of uuid is given, without having to use any special flag.
+
 ### Multiple accounts
 
 This project support multi-accounts decryption. However, keep in mind that you need:

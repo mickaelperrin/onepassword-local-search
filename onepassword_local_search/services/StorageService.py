@@ -1,7 +1,9 @@
 from os import environ, path as os_path
 from sqlite3 import Connection, Cursor, connect as sqlite3_connect
 from onepassword_local_search.exceptions.ManagedException import ManagedException
+from onepassword_local_search.lib.utils import is_uuid
 from platform import system
+import re
 
 
 class StorageService:
@@ -64,7 +66,14 @@ class StorageService:
         return self.cur.execute(query).fetchone()['nb']
 
     def get_item_by_uuid(self, uuid, custom_uuid_mapping=None):
-        if custom_uuid_mapping is None:
+        if self.custom_uuid_mapping is None and custom_uuid_mapping is None:
+            if is_uuid(uuid):
+                custom_uuid_mapping = 'UUID'
+            elif re.match('[0-9]+', uuid):
+                custom_uuid_mapping = 'LASTPASS'
+            else:
+                custom_uuid_mapping = self.custom_uuid_mapping
+        else:
             custom_uuid_mapping = self.custom_uuid_mapping
         if custom_uuid_mapping == 'UUID':
             query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE custom_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
