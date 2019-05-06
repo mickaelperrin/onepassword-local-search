@@ -61,7 +61,7 @@ class AccountService:
                     not_logged_accounts.append(account)
                     pass
             if len(not_logged_accounts) > 0:
-                raise Exception('Not authenticated')
+                raise ManagedException('Not authenticated')
         except Exception:
             for account in not_logged_accounts:
                 if account['shorthand'] == 'my':
@@ -83,12 +83,12 @@ class AccountService:
                 account_id = vault['account_id']
                 break
         else:
-            raise Exception('Unable to find proper decryptor for vault %s' % vaultId)
+            raise ManagedException('Unable to find proper decryptor for vault %s' % vaultId)
 
         if account_id in self.cryptoServices.keys():
             return self.cryptoServices[account_id]
         else:
-            raise Exception('Unable to find proper decryptor for vault %s' % vaultId)
+            raise ManagedException('Unable to find proper decryptor for vault %s' % vaultId)
 
     def is_main_account(self, account):
         return account['id'] == 1

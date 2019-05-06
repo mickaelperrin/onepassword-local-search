@@ -110,12 +110,12 @@ class StorageService:
         if path is not None and path != '':
             return path
         else:
-            raise Exception('Unable to determine 1Password local database patsh')
+            raise ManagedException('Unable to determine 1Password local database patsh')
 
     def set_database_connexion(self):
         path = os_path.expandvars(self.guess_database_path())
         if not os_path.isfile(path):
-            raise Exception('Database file not found at ' + path)
+            raise ManagedException('Database file not found at ' + path)
         con = sqlite3_connect(path)
         con.row_factory = self._dict_factory
         return con

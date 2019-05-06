@@ -53,13 +53,13 @@ def cli_get_uuid():
 
 
 @pytest.mark.usefixtures("no_op_session")
-def test_get_uuid(cli_get_uuid, capsys):
+def test_get_uuid_without_session(cli_get_uuid, capsys):
     with pytest.raises(SystemExit) as exit_code:
         cli_get_uuid.run()
     std = capsys.readouterr()
-    assert std.out.find('You are not connected to the required account to decrypt item') != -1
     assert exit_code.type == SystemExit
     assert exit_code.value.code == 1
+    assert std.err.find('You are not connected to the required account to decrypt item') != -1
 
 
 @pytest.mark.usefixtures("op_session")
@@ -92,9 +92,12 @@ def test_get_login_title_auto_lastpass_uuid(capsys):
 
 @pytest.mark.usefixtures("op_session")
 def test_get_no_totp(capsys):
-    with pytest.raises(Exception) as exit_code:
+    with pytest.raises(SystemExit) as exit_code:
         CliSimple('script', 'get', common_data('item_uuid'), 'totp').run()
-    assert exit_code.match("Item e25haqmocd5ifiymorfzwxnzry doesn't seem to have a field untitled \"One-time password\"")
+    std = capsys.readouterr()
+    assert exit_code.type == SystemExit
+    assert exit_code.value.code == 1
+    assert std.err == "Item e25haqmocd5ifiymorfzwxnzry doesn't seem to have a field untitled \"One-time password\"\n"
 
 
 @pytest.mark.usefixtures("op_session")

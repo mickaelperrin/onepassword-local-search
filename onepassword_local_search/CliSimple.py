@@ -59,7 +59,8 @@ class CliSimple:
             self.onePassword = OnePassword(custom_uuid_mapping=custom_uuid_mapping, disable_session_caching=self.args.disable_session_caching)
             return getattr(self, self.args.command.replace('-', '_'))()
         except ManagedException as e:
-            exit(e.args[0])
+            print(e.args[0], file=sys.stderr)
+            sys.exit(1)
         except (BrokenPipeError, IOError):
             sys.stderr.close()
             pass

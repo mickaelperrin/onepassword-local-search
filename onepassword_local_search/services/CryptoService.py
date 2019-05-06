@@ -55,7 +55,7 @@ class CryptoService:
 
     def _get_session_key(self):
         if not os_environ.get('OP_SESSION_' + self.shorthand):
-            raise Exception('Environment variable OP_SESSION_team is not set for %s ' % self.shorthand)
+            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.shorthand)
         return os_environ.get('OP_SESSION_' + self.shorthand)
 
     @staticmethod
@@ -68,7 +68,7 @@ class CryptoService:
         # TODO: implement for other platforms than MAC
         path = os_path.join(os_environ.get('TMPDIR'), 'com.agilebits.op.501')
         if not os_path.isdir(path):
-            raise Exception('Session private folder is missing. Ensure you are signin with the onepassword cli (op).')
+            raise ManagedException('Session private folder is missing. Ensure you are signin with the onepassword cli (op).')
         return path
 
     def _get_encrypted_session_file_path(self):
@@ -86,7 +86,7 @@ class CryptoService:
             if os_path.isfile(filepath):
                 return filepath
             else:
-                raise Exception('Unable to find session file')
+                raise ManagedException('Unable to find session file')
         return filepath
 
     def _get_encrypted_session_key(self):

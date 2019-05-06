@@ -16,11 +16,11 @@ class ConfigFileService:
         op_config_path = os_environ.get('ONEPASSWORD_CONFIG_FILE_PATH')
         if op_config_path:
             if not os_path.isfile(op_config_path):
-                raise Exception('The env varialbe ONEPASSWORD_CONFIG_FILE_PATH speciies a missing file for OnePassword CLI configuration')
+                raise ManagedException('The env varialbe ONEPASSWORD_CONFIG_FILE_PATH speciies a missing file for OnePassword CLI configuration')
         else:
             op_config_path = os_path.join(os_environ.get('HOME'), '.op', 'config')
         if not os_path.isfile(op_config_path):
-            raise Exception('OnePassword CLI configuration is not present. Ensure you have run op signin')
+            raise ManagedException('OnePassword CLI configuration is not present. Ensure you have run op signin')
         with open(op_config_path) as op_config_file:
             return json_load(op_config_file)
 
@@ -28,7 +28,7 @@ class ConfigFileService:
         if hasattr(self, 'latest_signin') and self.latest_signin:
             return self.latest_signin
         if not self.config.get('latest_signin'):
-            raise Exception('Missing latest_signin information. Ensure you are sign in')
+            raise ManagedException('Missing latest_signin information. Ensure you are sign in')
         return self.config.get('latest_signin')
 
     def get_user_uuid_from_latest_signin(self):
@@ -45,5 +45,5 @@ class ConfigFileService:
         for account in self.config['accounts']:
             if account['userUUID'] == user_uuid:
                 return account['shorthand']
-        raise Exception('Unable to find shorthand for account with user uuid %s' % user_uuid)
+        raise ManagedException('Unable to find shorthand for account with user uuid %s' % user_uuid)
 

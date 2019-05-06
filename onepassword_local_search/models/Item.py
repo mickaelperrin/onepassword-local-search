@@ -92,5 +92,5 @@ class Item:
         if token:
             return pyotp.TOTP(token.replace(' ', '')).now()
         else:
-            raise Exception('Item %s doesn\'t seem to have a field untitled "One-time password"' % self.uuid)
+            raise ManagedException('Item %s doesn\'t seem to have a field untitled "One-time password"' % self.uuid)
 
