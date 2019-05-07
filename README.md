@@ -43,7 +43,7 @@ The filter will only return entries whose title contains the filter string.
 
 By appending, `--output-encoding=json`, you can generate proper JSON encoded lists. For example:
 ```
-op-local list --format='{{"uuid": {uuid}, "title": {title}}},' --output-encoding=json
+op-local list --format='{{"uuid": "{uuid}", "title": "{title}"}},' --output-encoding=json
 ```
 
 ### Is authenticated
