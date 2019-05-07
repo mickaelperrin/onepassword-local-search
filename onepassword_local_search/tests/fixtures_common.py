@@ -17,9 +17,9 @@ def common_data(item):
         login_lastpass_uuid='1234567890',
         personal_login_uuid='jgnp5odpifg2rhg4au2crq3v2y',
         subdomain='onepassword_local_search',
-        session_key='azuDId6PvlUtwsLQZD-4jzGpMxUxRNQOxEgcdbZhppI',
-        personal_session_key='BzaQO_o03hyCr4sF9LQplEzn9lmVBwyPIzA2rPqdaQs',
-        session_filename='.Y_efcm4Gd_W4NnRTMeOuSEHPA5w'
+        session_key='UuwKnBbWllg2vqEnhH_tQ1PXGB3f8nbwdoy5YKkor_0',
+        personal_session_key='Xp-LTYxjqlSJ4SChSxi8jVQ9ZnJWanX5r7UNAERwceM',
+        session_filename='.XPgC-AnuKJcmG3-Lj4UG2iKBxcQ'
     ).get(item)
 
 

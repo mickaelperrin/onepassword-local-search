@@ -33,8 +33,8 @@ def test_check_cache():
     for file in glob.glob(os.path.join(os.path.dirname(__file__), 'tests', '.*_cache')):
         os.unlink(file)
     CliSimple('script', 'list').run()
-    assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.ValshXBMgxdeEu3G90_PBBq1Sq0_cached'))
-    assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.Y_efcm4Gd_W4NnRTMeOuSEHPA5w_cached'))
+    assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.bWUmfqAZUUOJMWoYaBQN4wC5JbM_cached'))
+    assert os.path.isfile(os.path.join(os.path.dirname(__file__), 'tests', '.XPgC-AnuKJcmG3-Lj4UG2iKBxcQ_cached'))
 
 
 @pytest.mark.usefixtures("op_dual_session")
@@ -159,6 +159,7 @@ def test_list(capsys):
 5pwta5jhf5fhj5wzfek4sb22ve Mickaël
 a53bppwuhi65b2e34g45fjyfwu Email account
 akvb4bbdequd3z6tuorl44btqm Bienvenue dans 1Password !
+c6mqeodzuvazris6v6toq5trja Test JSON encoding: &é"'è;?
 e25haqmocd5ifiymorfzwxnzry Software licence
 hujxh3pryngc7du3owbkwwuh3i test
 mvkzp2v2myljdqzxcv5736optu Secure Note
@@ -177,6 +178,7 @@ def test_list_custom_field(capsys):
 5pwta5jhf5fhj5wzfek4sb22ve
 a53bppwuhi65b2e34g45fjyfwu
 akvb4bbdequd3z6tuorl44btqm
+c6mqeodzuvazris6v6toq5trja
 e25haqmocd5ifiymorfzwxnzry
 hujxh3pryngc7du3owbkwwuh3i
 mvkzp2v2myljdqzxcv5736optu
@@ -195,6 +197,7 @@ def test_list_custom_uuid(capsys):
 5pwta5jhf5fhj5wzfek4sb22ve
 a53bppwuhi65b2e34g45fjyfwu c08335ad-5f93-471f-8605-2500ae4b9ce1
 akvb4bbdequd3z6tuorl44btqm
+c6mqeodzuvazris6v6toq5trja
 e25haqmocd5ifiymorfzwxnzry 84103613-2483-430d-8e74-bc72036f378c
 hujxh3pryngc7du3owbkwwuh3i
 mvkzp2v2myljdqzxcv5736optu b325bc32-7c2d-4107-bc2c-73777cb3e33a
