@@ -30,7 +30,7 @@ value of the totp by using the special field `totp`. For example: `op-local get 
 
 ### List items
 ```
-op-local list [--format='{uuid} {title}'] [--filter='']
+op-local list [--format='{uuid} {title}'] [--filter=''] [--output-encoding=json]
 ```
 
 The format string allows you to customize the ouput format of the list items. You can use any field, 
@@ -40,6 +40,11 @@ the first match in any section will be used.
  ```
  
 The filter will only return entries whose title contains the filter string. 
+
+By appending, `--output-encoding=json`, you can generate proper JSON encoded lists. For example:
+```
+op-local list --format='{{"uuid": {uuid}, "title": {title}}},' --output-encoding=json
+```
 
 ### Is authenticated
 ```

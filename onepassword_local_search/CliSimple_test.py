@@ -282,3 +282,22 @@ def test_get_personal_login_title(capsys):
     CliSimple('script', 'get', common_data('personal_login_uuid'), 'title').run()
     std = capsys.readouterr()
     assert std.out == 'Personal login'
+
+
+@pytest.mark.usefixtures("op_session")
+def test_list_json_encoding(capsys):
+    CliSimple('script', 'list', '--format={{"uuid": {uuid}, "title": {title}}},\n', '--output-encoding=json').run()
+    std = capsys.readouterr()
+    assert '\n'.join(sorted(std.out.split('\n'))) == '''
+{"uuid": "5pwta5jhf5fhj5wzfek4sb22ve", "title": "Micka\\u00ebl"},
+{"uuid": "a53bppwuhi65b2e34g45fjyfwu", "title": "Email account"},
+{"uuid": "akvb4bbdequd3z6tuorl44btqm", "title": "Bienvenue dans 1Password\\u00a0!"},
+{"uuid": "c6mqeodzuvazris6v6toq5trja", "title": "Test JSON encoding: &\\u00e9\\"\'\\u00e8;?"},
+{"uuid": "e25haqmocd5ifiymorfzwxnzry", "title": "Software licence"},
+{"uuid": "hujxh3pryngc7du3owbkwwuh3i", "title": "test"},
+{"uuid": "mvkzp2v2myljdqzxcv5736optu", "title": "Secure Note"},
+{"uuid": "n3iopimevz3pddels3dgfwyp2a", "title": "Simple Password"},
+{"uuid": "ngkzmk54qoltpdoseqspma4tba", "title": "File certificate"},
+{"uuid": "smeg46sk3agiee4cfinvpf7z4u", "title": "Database"},
+{"uuid": "w2euij3m4zhqa5opftnthe5d4q", "title": "Server"},
+{"uuid": "zzfmhu2j7ajq55mmpm3ihs3oqy", "title": "Connexion"},'''

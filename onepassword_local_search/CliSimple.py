@@ -29,6 +29,7 @@ class CliSimple:
         action_list = subparsers.add_parser('list', help='list all available entries')
         action_list.add_argument('--format', help='custom format string')
         action_list.add_argument('--filter', help='filter over title entry')
+        action_list.add_argument('--output-encoding', help='encode values in one of the supported format: (json)', default=None)
 
         action_is_authenticated = subparsers.add_parser('is-authenticated', help='check if authenticated locally')
 
@@ -75,7 +76,7 @@ class CliSimple:
         return self.onePassword.get(self.args.uuid, self.args.field, custom_uuid_mapping)
 
     def list(self):
-        return self.onePassword.list(self.args.format, self.args.filter)
+        return self.onePassword.list(self.args.format, self.args.filter, result_encoding=self.args.output_encoding)
 
     def mapping(self):
         return self.onePassword.mapping(self.args.subcommand, self.args.use_lastpass_uuid)
