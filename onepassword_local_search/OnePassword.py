@@ -61,7 +61,7 @@ class OnePassword:
                 result = item.get(key, strict=False)
                 if result is not None and self.output_encoding == 'json':
                     import json
-                    return json.dumps(result)
+                    return json.dumps(result)[1:-1]
                 else:
                     return result
 

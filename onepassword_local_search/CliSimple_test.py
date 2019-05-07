@@ -286,7 +286,7 @@ def test_get_personal_login_title(capsys):
 
 @pytest.mark.usefixtures("op_session")
 def test_list_json_encoding(capsys):
-    CliSimple('script', 'list', '--format={{"uuid": {uuid}, "title": {title}}},\n', '--output-encoding=json').run()
+    CliSimple('script', 'list', '--format={{"uuid": "{uuid}", "title": "{title}"}},\n', '--output-encoding=json').run()
     std = capsys.readouterr()
     assert '\n'.join(sorted(std.out.split('\n'))) == '''
 {"uuid": "5pwta5jhf5fhj5wzfek4sb22ve", "title": "Micka\\u00ebl"},
