@@ -13,7 +13,7 @@ def is_uuid(uuid_string, version=4):
 class SimpleFormatter(string.Formatter):
     output_encoding: str = None
 
-    def __init__(self, output_encoding):
+    def __init__(self, output_encoding=None):
         super().__init__()
         self.output_encoding = output_encoding
 
