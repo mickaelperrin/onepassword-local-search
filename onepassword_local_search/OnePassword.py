@@ -4,7 +4,7 @@ from onepassword_local_search.models.Item import Item
 from onepassword_local_search.services.ConfigFileService import ConfigFileService
 from onepassword_local_search.services.AccountService import AccountService
 from onepassword_local_search.exceptions.ManagedException import ManagedException
-import string
+from onepassword_local_search.lib.utils import SimpleFormatter
 
 
 class OnePassword:
@@ -50,21 +50,6 @@ class OnePassword:
         return items
 
     def list(self, result_format=None, result_fitler=None, result_encoding=None):
-        class SimpleFormatter(string.Formatter):
-            output_encoding: str = None
-
-            def __init__(self, output_encoding):
-                super().__init__()
-                self.output_encoding = output_encoding
-
-            def get_value(self, key, args, kwargs):
-                result = item.get(key, strict=False)
-                if result is not None and self.output_encoding == 'json':
-                    import json
-                    return json.dumps(result)[1:-1]
-                else:
-                    return result
-
         list_format = result_format if result_format else '{uuid} {title}'
         sf = SimpleFormatter(output_encoding=result_encoding)
         for item in self.get_items(result_fitler):
