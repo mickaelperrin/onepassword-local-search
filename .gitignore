@@ -7,3 +7,4 @@ __pycache__/
 coverage.xml
 *.sqlite-shm
 *.sqlite-wal
+/.venv
