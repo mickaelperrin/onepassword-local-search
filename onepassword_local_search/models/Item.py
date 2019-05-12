@@ -73,7 +73,7 @@ class Item:
     def _get_details_field(self, field):
         if self.details.get('fields'):
             for f in self.details.get('fields'):
-                if f['name'] == field:
+                if 'name' in f.keys() and f['name'] == field:
                     return f['value']
         return None
 
