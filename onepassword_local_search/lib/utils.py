@@ -2,10 +2,15 @@ from uuid import UUID
 import string
 
 
-def is_uuid(uuid_string, version=4):
+def is_uuid(uuid_string, version=None):
     try:
-        uid = UUID(uuid_string, version=version)
-        return uid.hex == uuid_string.replace('-', '')
+        if version is None:
+            for i in range(1, 6):
+                if is_uuid(uuid_string, i):
+                    return True
+        else:
+            uid = UUID(uuid_string, version=version)
+            return uid.hex == uuid_string.replace('-', '')
     except ValueError:
         return False
 
