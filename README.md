@@ -82,6 +82,7 @@ This project support multi-accounts decryption. However, keep in mind that you n
 
 - Currently, vaults of type E (family shared ?) are not supported. I don't have the need of this kind of vaults currently. Not sure that I will work on this.
 - Vaults which are not shared with you are not excluded and will fail the list process. I guess this is an easy fix that will come in a next release.
+- Groups permissions are not implemented. Users must be attached to each vaults manually.
 
 ## Why this project ?
 
