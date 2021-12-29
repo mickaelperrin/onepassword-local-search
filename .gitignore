@@ -8,3 +8,5 @@ coverage.xml
 *.sqlite-shm
 *.sqlite-wal
 /.venv
+/venv
+.DS_Store
