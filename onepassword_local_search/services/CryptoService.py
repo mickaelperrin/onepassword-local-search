@@ -11,7 +11,6 @@ from glob import glob as glob_glob
 class CryptoService:
 
     accountId: int
-    accountUUID: str
     storageService: StorageService
     disable_session_caching: bool
     sessionKey: str
@@ -33,7 +32,6 @@ class CryptoService:
         self.configFileService = config_file_service
         self.userUUID = self.storageService.get_user_uuid_from_account_id(account_id)
         self.shorthand = self.configFileService.get_shorthand_from_user_uuid(self.userUUID)
-        self.accountUUID = self.configFileService.get_accountUUID_from_user_uuid(self.userUUID)
         self.disable_session_caching = disable_session_caching
         if self.disable_session_caching:
             self.cleanup_sessions_cache()
@@ -57,9 +55,9 @@ class CryptoService:
         self.privateKey = json_loads(self.privateKeyRaw)
 
     def _get_session_key(self):
-        if not os_environ.get('OP_SESSION_' + self.accountUUID):
-            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.accountUUID)
-        return os_environ.get('OP_SESSION_' + self.accountUUID)
+        if not os_environ.get('OP_SESSION_' + self.userUUID):
+            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.userUUID)
+        return os_environ.get('OP_SESSION_' + self.userUUID)
 
     @staticmethod
     def _get_encrypted_session_directory_path():
