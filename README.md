@@ -16,7 +16,7 @@ This tool do not replace the official CLI `op` of 1Password. You still need it t
 
 So, ensure that you have registered the OP_SESSION_team in your environment.
 
-####Database path
+#### Database path
 
 The script will try to search the database at standard path depending on your platform. It it fails or if you want
 to use another database, you could set the env variable ONEPASSWORD_LOCAL_DATABASE_PATH with the path 
@@ -101,70 +101,69 @@ is directly impacted by how far your are from their servers.
 
 ### Get command
 
-#### Official op cli 1m23s
+#### Official op cli 50,6s
 
 > Performance may depends on how far you are of a 1Password data-center. I live in South of France, nearest is Frankfurt.
 
 ```
-ime (for i in {1..20}; do IDS=('zzfmhu2j7ajq55mmpm3ihs3oqy' 'n3iopimevz3pddels3dgfwyp2a' ); eval "time op get item ${IDS[$((RANDOM % ${#IDS[@]}+1))]} --session="XXX"  > /dev/null"; done)
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,50s user 2,09s system 85% cpu 4,180 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,49s user 2,12s system 84% cpu 4,280 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,50s user 2,12s system 85% cpu 4,230 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,49s user 2,06s system 84% cpu 4,210 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,49s user 2,08s system 88% cpu 4,029 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,50s user 2,11s system 85% cpu 4,222 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,50s user 2,10s system 85% cpu 4,189 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,50s user 2,14s system 93% cpu 3,888 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,49s user 2,12s system 78% cpu 4,601 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,51s user 2,14s system 87% cpu 4,182 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,51s user 2,12s system 92% cpu 3,913 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,49s user 2,11s system 80% cpu 4,494 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,50s user 2,12s system 91% cpu 3,972 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,50s user 2,15s system 93% cpu 3,893 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,50s user 2,12s system 80% cpu 4,487 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,49s user 2,10s system 81% cpu 4,378 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,47s user 2,05s system 90% cpu 3,909 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,50s user 2,07s system 92% cpu 3,859 total
-op get item zzfmhu2j7ajq55mmpm3ihs3oqy  > /dev/null  1,50s user 2,12s system 93% cpu 3,861 total
-op get item n3iopimevz3pddels3dgfwyp2a  > /dev/null  1,50s user 2,09s system 84% cpu 4,240 total
-( for i in {1..20}; do; IDS=('zzfmhu2j7ajq55mmpm3ihs3oqy' ) ; eval ; done; )  29,92s user 42,15s system 86% cpu 1:23,02 total
-
+# Replace UUIDS and session key with your own values
+time (for i in {1..20}; do UUIDS=('u5qwa2th7ptrb5leozq2sa2gke' 'opbyml76ircfxchjp7d5oa6lm4' ); eval "time op get item ${UUIDS[$((RANDOM % ${#UUIDS[@]}+1))]} --session="XXX"  > /dev/null"; done)
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,50s user 0,09s system 60% cpu 2,655 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,46s user 0,08s system 61% cpu 2,491 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,50s user 0,09s system 63% cpu 2,527 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,46s user 0,08s system 62% cpu 2,461 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,49s user 0,09s system 64% cpu 2,449 total
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,50s user 0,09s system 63% cpu 2,509 total
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,54s user 0,10s system 63% cpu 2,593 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,50s user 0,09s system 63% cpu 2,512 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,48s user 0,09s system 62% cpu 2,527 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,47s user 0,08s system 59% cpu 2,618 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,55s user 0,09s system 59% cpu 2,759 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,50s user 0,09s system 61% cpu 2,567 total
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,52s user 0,10s system 62% cpu 2,597 total
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,48s user 0,09s system 61% cpu 2,536 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,56s user 0,10s system 62% cpu 2,649 total
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,57s user 0,11s system 56% cpu 2,991 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,81s user 0,14s system 54% cpu 3,597 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,64s user 0,12s system 57% cpu 3,051 total
+op item get 6rtzezejb7saty4nbzdqsbgplu  > /dev/null  1,75s user 0,14s system 61% cpu 3,050 total
+op item get opbyml76ircfxchjp7d5oa6lm4  > /dev/null  1,55s user 0,10s system 59% cpu 2,786 total
+( for i in {1..20}; do; IDS=('opbyml76ircfxchjp7d5oa6lm4' ) ; eval ; done; )  30,83s user 1,98s system 60% cpu 53,935 total
 ```
 
-#### op-local 3,5s (23x faster)
+#### op-local 2,3s (22x faster)
 
 ```
- time (for i in {1..20}; do IDS=('gzikfbpysjwsqdagcgxcwqmmxe' 'jfcpk2cpgxarvrhlatca7tsyui' 'osk6bqktonuxjm4qgqxs2tpz6a' 'dytzaelqvqrmhfstscb67geuly' ) FIELDS=('password' 'title'); eval "time op-local get ${IDS[$((RANDOM % ${#IDS[@]}+1))]} ${FIELDS[$((RANDOM % ${#FIELDS[@]}+1))]} > /dev/null"; done)
-op-local get dytzaelqvqrmhfstscb67geuly title > /dev/null  0,13s user 0,03s system 97% cpu 0,165 total
-op-local get gzikfbpysjwsqdagcgxcwqmmxe password > /dev/null  0,14s user 0,04s system 98% cpu 0,175 total
-op-local get dytzaelqvqrmhfstscb67geuly title > /dev/null  0,14s user 0,03s system 98% cpu 0,176 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a password > /dev/null  0,13s user 0,03s system 98% cpu 0,170 total
-op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,14s user 0,04s system 98% cpu 0,175 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a password > /dev/null  0,14s user 0,04s system 98% cpu 0,178 total
-op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,13s user 0,03s system 98% cpu 0,168 total
-op-local get jfcpk2cpgxarvrhlatca7tsyui title > /dev/null  0,13s user 0,03s system 98% cpu 0,169 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,13s user 0,03s system 97% cpu 0,171 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a password > /dev/null  0,13s user 0,04s system 98% cpu 0,173 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,14s user 0,04s system 98% cpu 0,173 total
-op-local get jfcpk2cpgxarvrhlatca7tsyui title > /dev/null  0,14s user 0,03s system 97% cpu 0,176 total
-op-local get gzikfbpysjwsqdagcgxcwqmmxe password > /dev/null  0,13s user 0,03s system 97% cpu 0,171 total
-op-local get dytzaelqvqrmhfstscb67geuly password > /dev/null  0,14s user 0,03s system 97% cpu 0,174 total
-op-local get jfcpk2cpgxarvrhlatca7tsyui password > /dev/null  0,14s user 0,04s system 98% cpu 0,179 total
-op-local get dytzaelqvqrmhfstscb67geuly title > /dev/null  0,14s user 0,04s system 97% cpu 0,181 total
-op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,14s user 0,04s system 97% cpu 0,179 total
-op-local get gzikfbpysjwsqdagcgxcwqmmxe title > /dev/null  0,14s user 0,04s system 98% cpu 0,178 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,14s user 0,04s system 98% cpu 0,182 total
-op-local get osk6bqktonuxjm4qgqxs2tpz6a title > /dev/null  0,15s user 0,04s system 97% cpu 0,188 total
-( for i in {1..20}; do; IDS=('gzikfbpysjwsqdagcgxcwqmmxe'   ) FIELDS=( 'title)  2,74s user 0,71s system 98% cpu 3,509 total
-
+time (for i in {1..20}; do UUIDS=('6rtzezejb7saty4nbzdqsbgplu' 'opbyml76ircfxchjp7d5oa6lm4' ) FIELDS=('password' 'title'); eval "time op-local get ${UUIDS[$((RANDOM % ${#UUIDS[@]}+1))]} ${FIELDS[$((RANDOM % ${#FIELDS[@]}+1))]} > /dev/null"; done)
+op-local get opbyml76ircfxchjp7d5oa6lm4 title > /dev/null  0,08s user 0,03s system 61% cpu 0,179 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,07s user 0,03s system 90% cpu 0,109 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 title > /dev/null  0,07s user 0,03s system 92% cpu 0,108 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,07s user 0,03s system 91% cpu 0,110 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 password > /dev/null  0,07s user 0,03s system 91% cpu 0,109 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,07s user 0,03s system 91% cpu 0,110 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,07s user 0,03s system 91% cpu 0,109 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,07s user 0,03s system 92% cpu 0,108 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu password > /dev/null  0,08s user 0,03s system 91% cpu 0,116 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu password > /dev/null  0,07s user 0,03s system 92% cpu 0,109 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 password > /dev/null  0,08s user 0,03s system 92% cpu 0,113 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu password > /dev/null  0,08s user 0,03s system 93% cpu 0,124 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 title > /dev/null  0,08s user 0,03s system 93% cpu 0,111 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 password > /dev/null  0,08s user 0,03s system 93% cpu 0,114 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu password > /dev/null  0,08s user 0,03s system 93% cpu 0,113 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,08s user 0,03s system 92% cpu 0,113 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 title > /dev/null  0,08s user 0,03s system 93% cpu 0,113 total
+op-local get 6rtzezejb7saty4nbzdqsbgplu title > /dev/null  0,08s user 0,03s system 93% cpu 0,117 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 password > /dev/null  0,08s user 0,03s system 92% cpu 0,122 total
+op-local get opbyml76ircfxchjp7d5oa6lm4 title > /dev/null  0,08s user 0,03s system 92% cpu 0,113 total
+( for i in {1..20}; do; UUIDS=('6rtzezejb7saty4nbzdqsbgplu' ) FIELDS=( 'title)  1,52s user 0,57s system 90% cpu 2,322 total
 ```
 
 ### List command
 
-#### 0,7s to list and decrypt 1877 entries
+#### 2,1s to list and decrypt 3290 entries
 ```
 time op-local list | wc -l
-    1877
+    3290
 op-local list  0,68s user 0,05s system 99% cpu 0,741 total
 wc -l  0,00s user 0,00s system 0% cpu 0,740 total
 ```
@@ -183,6 +182,7 @@ pip3 install -r requirements/dev.txt
 ## Testing
 
 Testing is done through `pytest`.
+Tests have not been updated for releases after 1.0.0. It requires a new testing database with new format of 1Password8.
 
 
 ## Acknowledgments
