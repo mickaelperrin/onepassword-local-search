@@ -42,7 +42,7 @@ class OnePassword:
     def _text_matches_filter(self, text, filter, filter_operator):
         if filter is None:
             return True
-        if isinstance(filter, str) and str in text:
+        if isinstance(filter, str) and filter in text:
             return True
         if isinstance(filter, list):
             matches = []
