@@ -77,14 +77,16 @@ class StorageService:
         else:
             custom_uuid_mapping = self.custom_uuid_mapping
         if custom_uuid_mapping == 'UUID':
-            query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE custom_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
+            query = "SELECT * FROM item_overviews WHERE uuid = (SELECT op_uuid FROM %s WHERE custom_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
         elif custom_uuid_mapping == 'LASTPASS':
-            query = "SELECT * FROM items WHERE uuid = (SELECT op_uuid FROM %s WHERE lpass_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
+            query = "SELECT * FROM item_overviews WHERE uuid = (SELECT op_uuid FROM %s WHERE lpass_uuid='%s')" % (StorageService.uuid_mapping_table_name, uuid)
         else:
-            query = "SELECT * FROM items WHERE uuid = '%s'" % uuid
+            query = "SELECT * FROM item_overviews WHERE uuid = '%s'" % uuid
         res = self.cur.execute(query).fetchone()
         if res is None:
             raise ManagedException('Unable to find item with uuid: %s' % uuid)
+        query_details = "SELECT enc_details FROM item_details WHERE id = '%s';" % res['id']
+        res['enc_details'] = self.cur.execute(query_details).fetchone()['enc_details']
         return res
 
     def list_mapping(self):
