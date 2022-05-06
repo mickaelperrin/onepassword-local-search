@@ -3,6 +3,7 @@ from sqlite3 import Connection, Cursor, connect as sqlite3_connect
 from onepassword_local_search.exceptions.ManagedException import ManagedException
 from onepassword_local_search.lib.utils import is_uuid
 from platform import system
+import json
 import re
 
 
@@ -124,32 +125,48 @@ class StorageService:
         query = "select id from accounts where account_uuid='%s';" % account_uuid
         return self.cur.execute(query).fetchone()['id']
 
+    def _get_account_key(self, account_id, keytype):
+        query = "select data from account_objects where account_id=%s and object_type='keyset';" % account_id
+        keysets = self.cur.execute(query).fetchall()
+        for data in keysets:
+            keyset = json.loads(data['data'])
+            if keyset['encrypted_by'] != 'mp':
+                continue
+            return keyset[keytype]
+
     def get_encrypted_symmetric_key(self, account_id):
-        query = "select enc_sym_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
-        return self.cur.execute(query).fetchone()['enc_sym_key']
+        return self._get_account_key(account_id, 'enc_sym_key')
 
     def get_account_key(self, account_id):
-        query = "select enc_login from accounts where id=%s" % account_id
-        return self.cur.execute(query).fetchone()['enc_login']
+        return self._get_account_key(account_id, 'enc_sign_key')
 
     def get_encrypted_private_key(self, account_id):
-        query = "select enc_pri_key from keysets where encrypted_by='mp' and account_id=%s;" % account_id
-        return self.cur.execute(query).fetchone()['enc_pri_key']
+        return self._get_account_key(account_id, 'enc_pri_key')
 
     def get_encrypted_vault_key(self, vault_id, account_id):
-        query = "select enc_vault_key from vault_access where vault_id=%s and account_id=%s;" % (vault_id, account_id)
-        return self.cur.execute(query).fetchone()['enc_vault_key']
+        query = "select data from account_objects where object_type='vault' and id=%s and account_id=%s;" % (vault_id, account_id)
+        data = json.loads(self.cur.execute(query).fetchone()['data'])
+        return data['enc_vault_key']
 
     def list(self, account_ids):
-        query = "select * from items where trashed=0 and vault_id in (select vaults.id from vault_access, vaults where vaults.type != 'E' and vaults.id == vault_access.vault_id and vault_access.account_id IN (%s))" % ','.join(account_ids)
+        query = "select * from item_overviews, item_details where item_details.id = item_overviews.id and trashed=0 and vault_id in (%s);" \
+                % ','.join([ str(vault['id']) for vault in self.get_vaults_owned_by_accounts(account_ids) ])
         return self.cur.execute(query).fetchall()
 
     def get_vaults_owned_by_accounts(self, accounts=None):
-        if accounts is None or accounts == []:
-            return None
+        query_append = ""
+        if accounts is not None and accounts != []:
+            query_append = " and account_id IN (%s)" % ','.join(accounts)
         # currently we don't support type E
-        query = "select * from vault_access, vaults where vaults.type != 'E' and vault_access.account_id IN (%s) and vaults.id == vault_access.vault_id;" % ','.join(accounts)
-        return self.cur.execute(query).fetchall()
+        query = "select * from account_objects where object_type == 'vault' " + query_append + ";"
+        vaults = self.cur.execute(query).fetchall()
+        vaults_supported = []
+        for vault in vaults:
+            data = json.loads(vault['data'])
+            if data['vault_type'] == 'E':
+                continue
+            vaults_supported.append(vault)
+        return vaults_supported
 
     def get_account_uuid_from_account_id(self, account_id):
         query = "select account_uuid from accounts where id='%s';" % account_id
