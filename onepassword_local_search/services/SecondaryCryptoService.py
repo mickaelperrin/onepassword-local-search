@@ -24,15 +24,15 @@ class SecondaryCryptoService(CryptoService):
         self.encyptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
         self.symmetricKey = json_loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encyptedSymmetricyKey))
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
-        self.accountKey = json_loads(self.decrypt(self.mainCryptoService.symmetricKey['k'], self.encryptedAccountKey))
+        self.accountKey = json_loads(self.decrypt(self.symmetricKey['k'], self.encryptedAccountKey))
         self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
         self.privateKeyRaw = self.decrypt(self.symmetricKey['k'], self.encryptedPrivateKey).decode('utf-8')
         self.privateKey = json_loads(self.privateKeyRaw)
 
     def set_main_crypto_service(self):
         #TODO: singleton
-        self.mainCryptoService = CryptoService(self.storageService, self.configFileService, self.storageService.get_account_id_from_user_uuid(self.get_main_user_uuid()))
+        self.mainCryptoService = CryptoService(self.storageService, self.configFileService, self.storageService.get_account_id_from_account_uuid(self.get_main_account_uuid()))
         self.mainCryptoService._get_base_keys()
 
-    def get_main_user_uuid(self):
-        return self.storageService.get_main_user_uuid()
+    def get_main_account_uuid(self):
+        return self.storageService.get_main_account_uuid()

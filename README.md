@@ -5,6 +5,11 @@
 > This is an _**unofficial**_ tool focused on listing and decryption of secrets 
 > with increased performance comparing to native op CLI
 
+## 1Password version compatibility
+
+- releases under 1.0.0 are for 1Password7
+- releases after 1.0.0 are for 1Password8
+
 ## How to use ?
 
 This tool do not replace the official CLI `op` of 1Password. You still need it to perform signin and grab session keys.

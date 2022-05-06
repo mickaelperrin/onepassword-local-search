@@ -28,9 +28,11 @@ class AccountService:
     def get_available_accounts(self):
         accounts = []
         for account in self.existing_accounts:
-            if not os_environ.get('OP_SESSION_' + account['shorthand']):
+            if not 'accountUUID' in account.keys() or not os_environ.get('OP_SESSION_' + account['userUUID']):
                 continue
-            account_id = self.storageService.get_account_id_from_user_uuid(account['userUUID'])
+            account_id = self.storageService.get_account_id_from_account_uuid(
+                self.configFileService.get_account_uuid_from_user_uuid(account['userUUID'])
+            )
             if account_id:
                 account['id'] = account_id
                 accounts.append(account)

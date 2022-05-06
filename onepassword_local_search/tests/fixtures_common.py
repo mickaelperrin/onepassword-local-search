@@ -25,7 +25,7 @@ def common_data(item):
 
 @pytest.fixture
 def no_op_session(monkeypatch, mocker):
-    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), '1password.sqlite'))
     if environ.get('OP_SESSION_' + common_data('subdomain')):
         monkeypatch.delenv('OP_SESSION_' + common_data('subdomain'))
     if environ.get('OP_SESSION_my'):
@@ -39,7 +39,7 @@ def no_op_session(monkeypatch, mocker):
 
 @pytest.fixture
 def op_session(monkeypatch, mocker):
-    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), '1password.sqlite'))
     monkeypatch.setenv('OP_SESSION_' + common_data('subdomain'), common_data('session_key'))
     monkeypatch.setenv('OP_SESSION_PRIVATE_KEY_FOLDER', path.join(path.dirname(__file__)))
     if environ.get('OP_SESSION_my'):
@@ -53,7 +53,7 @@ def op_session(monkeypatch, mocker):
 
 @pytest.fixture
 def op_personal_session(monkeypatch, mocker):
-    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), '1password.sqlite'))
     if environ.get('OP_SESSION_my'):
         monkeypatch.delenv('OP_SESSION_my')
     monkeypatch.setenv('OP_SESSION_my', common_data('personal_session_key'))
@@ -68,7 +68,7 @@ def op_personal_session(monkeypatch, mocker):
 
 @pytest.fixture
 def op_dual_session(monkeypatch, mocker):
-    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), '1password.sqlite'))
     if environ.get('OP_SESSION_my'):
         monkeypatch.delenv('OP_SESSION_my')
     monkeypatch.setenv('OP_SESSION_my', common_data('personal_session_key'))
@@ -83,7 +83,7 @@ def op_dual_session(monkeypatch, mocker):
 
 @pytest.fixture
 def storage_service(monkeypatch):
-    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), 'B5.sqlite'))
+    monkeypatch.setenv('ONEPASSWORD_LOCAL_DATABASE_PATH', path.join(path.dirname(__file__), '1password.sqlite'))
     return StorageService()
 
 
