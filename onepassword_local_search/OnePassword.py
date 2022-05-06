@@ -85,18 +85,18 @@ class OnePassword:
         from .__version__ import __version__
         print('Version: ' + __version__)
 
-    def is_authenticated(self, user_uuids=None):
+    def is_authenticated(self, account_uuids=None):
         try:
             if self.accountService.cryptoServices == {}:
                 self.accountService.cryptoServices = self.accountService.set_crypto_services()
         except Exception:
             pass
-        if user_uuids is None:
-            user_uuids = [self.configFileService.get_user_uuid_from_latest_signin()]
-        if isinstance(user_uuids, str):
-            user_uuids = [user_uuids]
-        for user_uuid in user_uuids:
-            account_id = self.storageService.get_account_id_from_user_uuid(user_uuid)
+        if account_uuids is None:
+            account_uuids = [self.configFileService.get_account_uuid_from_latest_signin()]
+        if isinstance(account_uuids, str):
+            account_uuids = [account_uuids]
+        for account_uuid in account_uuids:
+            account_id = self.storageService.get_account_id_from_account_uuid(account_uuid)
             if account_id in self.accountService.cryptoServices.keys():
                 try:
                     if not self.accountService.cryptoServices[account_id].is_authenticated():

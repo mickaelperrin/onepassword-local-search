@@ -120,8 +120,8 @@ class StorageService:
         con.row_factory = self._dict_factory
         return con
 
-    def get_account_id_from_user_uuid(self, user_uuid):
-        query = "select id from accounts where user_uuid='%s';" % user_uuid
+    def get_account_id_from_account_uuid(self, account_uuid):
+        query = "select id from accounts where account_uuid='%s';" % account_uuid
         return self.cur.execute(query).fetchone()['id']
 
     def get_encrypted_symmetric_key(self, account_id):
@@ -151,10 +151,10 @@ class StorageService:
         query = "select * from vault_access, vaults where vaults.type != 'E' and vault_access.account_id IN (%s) and vaults.id == vault_access.vault_id;" % ','.join(accounts)
         return self.cur.execute(query).fetchall()
 
-    def get_user_uuid_from_account_id(self, account_id):
-        query = "select user_uuid from accounts where id='%s';" % account_id
-        return self.cur.execute(query).fetchone()['user_uuid']
+    def get_account_uuid_from_account_id(self, account_id):
+        query = "select account_uuid from accounts where id='%s';" % account_id
+        return self.cur.execute(query).fetchone()['account_uuid']
 
-    def get_main_user_uuid(self):
-        query = "select user_uuid from accounts order by id asc limit 1"
-        return self.cur.execute(query).fetchone()['user_uuid']
+    def get_main_account_uuid(self):
+        query = "select account_uuid from accounts order by id asc limit 1"
+        return self.cur.execute(query).fetchone()['account_uuid']

@@ -30,7 +30,7 @@ class AccountService:
         for account in self.existing_accounts:
             if not 'accountUUID' in account.keys() or not os_environ.get('OP_SESSION_' + account['accountUUID']):
                 continue
-            account_id = self.storageService.get_account_id_from_user_uuid(account['userUUID'])
+            account_id = self.storageService.get_account_id_from_account_uuid(account['accountUUID'])
             if account_id:
                 account['id'] = account_id
                 accounts.append(account)

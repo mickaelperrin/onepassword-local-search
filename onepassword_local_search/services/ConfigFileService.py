@@ -32,19 +32,18 @@ class ConfigFileService:
             raise ManagedException('Missing latest_signin information. Ensure you are sign in')
         return self.config.get('latest_signin')
 
-    def get_user_uuid_from_latest_signin(self):
+    def get_account_uuid_from_latest_signin(self):
         for account in self.config['accounts']:
             if account['shorthand'] != self.get_latest_signin():
                 continue
             else:
-                return account['userUUID']
+                return account['accountUUID']
 
     def get_accounts(self):
         return self.config['accounts']
 
-    def get_shorthand_from_user_uuid(self, user_uuid):
+    def get_shorthand_from_account_uuid(self, account_uuid):
         for account in self.config['accounts']:
-            if account['userUUID'] == user_uuid:
+            if account['accountUUID'] == account_uuid:
                 return account['shorthand']
-        raise ManagedException('Unable to find shorthand for account with user uuid %s' % user_uuid)
-
+        raise ManagedException('Unable to find shorthand for account with account uuid %s' % account_uuid)

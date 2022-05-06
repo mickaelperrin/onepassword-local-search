@@ -31,8 +31,8 @@ class SecondaryCryptoService(CryptoService):
 
     def set_main_crypto_service(self):
         #TODO: singleton
-        self.mainCryptoService = CryptoService(self.storageService, self.configFileService, self.storageService.get_account_id_from_user_uuid(self.get_main_user_uuid()))
+        self.mainCryptoService = CryptoService(self.storageService, self.configFileService, self.storageService.get_account_id_from_account_uuid(self.get_main_account_uuid()))
         self.mainCryptoService._get_base_keys()
 
-    def get_main_user_uuid(self):
-        return self.storageService.get_main_user_uuid()
+    def get_main_account_uuid(self):
+        return self.storageService.get_main_account_uuid()
