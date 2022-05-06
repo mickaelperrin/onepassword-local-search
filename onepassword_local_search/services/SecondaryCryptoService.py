@@ -24,7 +24,7 @@ class SecondaryCryptoService(CryptoService):
         self.encyptedSymmetricyKey = Cipher(self._get_encrypted_symmetric_key())
         self.symmetricKey = json_loads(self.decrypt(self.sessionPrivateKey['encodedMuk'], self.encyptedSymmetricyKey))
         self.encryptedAccountKey = Cipher(self._get_encrypted_account_key())
-        self.accountKey = json_loads(self.decrypt(self.mainCryptoService.symmetricKey['k'], self.encryptedAccountKey))
+        self.accountKey = json_loads(self.decrypt(self.symmetricKey['k'], self.encryptedAccountKey))
         self.encryptedPrivateKey = Cipher(self._get_encrypted_private_key())
         self.privateKeyRaw = self.decrypt(self.symmetricKey['k'], self.encryptedPrivateKey).decode('utf-8')
         self.privateKey = json_loads(self.privateKeyRaw)
