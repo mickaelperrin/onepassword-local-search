@@ -25,12 +25,14 @@ class CryptoService:
     privateKey: dict
     privateKeyRaw: str
     shorthand: str
+    userUUID: str
     vaultKeys: dict = {}
 
     def __init__(self, storage_service: StorageService, config_file_service: ConfigFileService, account_id, disable_session_caching=False):
         self.storageService = storage_service
         self.configFileService = config_file_service
         self.accountUUID = self.storageService.get_account_uuid_from_account_id(account_id)
+        self.userUUID = self.configFileService.get_user_uuid_from_account_uuid(self.accountUUID)
         self.shorthand = self.configFileService.get_shorthand_from_account_uuid(self.accountUUID)
         self.disable_session_caching = disable_session_caching
         if self.disable_session_caching:
@@ -55,9 +57,9 @@ class CryptoService:
         self.privateKey = json_loads(self.privateKeyRaw)
 
     def _get_session_key(self):
-        if not os_environ.get('OP_SESSION_' + self.accountUUID):
-            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.accountUUID)
-        return os_environ.get('OP_SESSION_' + self.accountUUID)
+        if not os_environ.get('OP_SESSION_' + self.userUUID):
+            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.userUUID)
+        return os_environ.get('OP_SESSION_' + self.userUUID)
 
     @staticmethod
     def _get_encrypted_session_directory_path():

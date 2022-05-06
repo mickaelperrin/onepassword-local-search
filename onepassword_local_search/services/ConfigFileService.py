@@ -47,3 +47,15 @@ class ConfigFileService:
             if account['accountUUID'] == account_uuid:
                 return account['shorthand']
         raise ManagedException('Unable to find shorthand for account with account uuid %s' % account_uuid)
+
+    def get_account_uuid_from_user_uuid(self, user_uuid):
+        for account in self.config['accounts']:
+            if account['userUUID'] == user_uuid:
+                return account['accountUUID']
+        raise ManagedException('Unable to find accountUUID for account with user uuid %s' % user_uuid)
+
+    def get_user_uuid_from_account_uuid(self, account_uuid):
+        for account in self.config['accounts']:
+            if account['accountUUID'] == account_uuid:
+                return account['userUUID']
+        raise ManagedException('Unable to find userUUID for account with account uuid %s' % account_uuid)
