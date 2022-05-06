@@ -39,20 +39,37 @@ class OnePassword:
             print(decrypted_field, end='')
         return decrypted_field
 
-    def get_items(self, result_fitler):
+    def _text_matches_filter(self, text, filter, filter_operator):
+        if filter is None:
+            return True
+        if isinstance(filter, str) and str in text:
+            return True
+        if isinstance(filter, list):
+            matches = []
+            for f in filter:
+                matches.append(f in text)
+            if filter_operator.lower() not in ('and', 'or'):
+                filter_operator = 'and'
+            if filter_operator.lower() == 'and' and False not in matches:
+                return True
+            if filter_operator.lower() == 'or' and True in matches:
+                return True
+        return False
+
+    def get_items(self, result_fitler, filter_operator):
         items = []
         for item in self.storageService.list(self.accountService.get_available_accounts_id()):
             encrypted_item = Item(item)
             decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
             decrypted_item = decryptor.decrypt_item(encrypted_item)
-            if result_fitler is None or result_fitler in decrypted_item.overview['title']:
+            if self._text_matches_filter(decrypted_item.overview['title'], result_fitler, filter_operator):
                 items.append(decrypted_item)
         return items
 
-    def list(self, result_format=None, result_fitler=None, result_encoding=None):
+    def list(self, result_format=None, result_fitler=None, filter_operator='AND', result_encoding=None):
         list_format = result_format if result_format else '{uuid} {title}'
         sf = SimpleFormatter(output_encoding=result_encoding)
-        for item in self.get_items(result_fitler):
+        for item in self.get_items(result_fitler, filter_operator):
             print(sf.format(list_format, item).strip())
 
     def mapping(self, subcommand, use_lastpass_uuid=False):
