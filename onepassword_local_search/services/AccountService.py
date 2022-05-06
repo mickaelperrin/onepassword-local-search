@@ -28,7 +28,7 @@ class AccountService:
     def get_available_accounts(self):
         accounts = []
         for account in self.existing_accounts:
-            if not os_environ.get('OP_SESSION_' + account['shorthand']):
+            if not 'accountUUID' in account.keys() or not os_environ.get('OP_SESSION_' + account['accountUUID']):
                 continue
             account_id = self.storageService.get_account_id_from_user_uuid(account['userUUID'])
             if account_id:

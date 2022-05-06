@@ -55,9 +55,9 @@ class CryptoService:
         self.privateKey = json_loads(self.privateKeyRaw)
 
     def _get_session_key(self):
-        if not os_environ.get('OP_SESSION_' + self.shorthand):
-            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.shorthand)
-        return os_environ.get('OP_SESSION_' + self.shorthand)
+        if not os_environ.get('OP_SESSION_' + self.userUUID):
+            raise ManagedException('Environment variable OP_SESSION_team is not set for %s ' % self.userUUID)
+        return os_environ.get('OP_SESSION_' + self.userUUID)
 
     @staticmethod
     def _get_encrypted_session_directory_path():
