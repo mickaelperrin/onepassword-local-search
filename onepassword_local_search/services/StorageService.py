@@ -101,7 +101,7 @@ class StorageService:
         if environ.get('ONEPASSWORD_LOCAL_DATABASE_PATH'):
             path = environ.get('ONEPASSWORD_LOCAL_DATABASE_PATH')
         elif system() == 'Darwin':
-            path = os_path.join(environ.get('HOME'), 'Library', 'Group Containers', '2BUA8C4S2C.com.agilebits', 'Library', 'Application Support', '1Password', 'Data', 'B5.sqlite')
+            path = os_path.join(environ.get('HOME'), 'Library', 'Group Containers', '2BUA8C4S2C.com.1password', 'Library', 'Application Support', '1Password', 'Data', '1password.sqlite')
         elif system() == 'Windows':
             path = os_path.join(environ.get('LocalAppData'), '1password', 'data', '1Password10.sqlite')
         else:
