@@ -17,8 +17,8 @@ class Item:
         self.id = row['id']
         self.uuid = row['uuid']
         self.vaultId = row['vault_id']
-        self.encryptedOverview = Cipher(row['overview'])
-        self.encryptedDetails = Cipher(row['details'])
+        self.encryptedOverview = Cipher(row['enc_overview'])
+        self.encryptedDetails = Cipher(row['enc_details'])
 
     def _search_recursive_in_sections(self, field):
         # Fallback: search fieldName is all sections
