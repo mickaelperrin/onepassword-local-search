@@ -56,7 +56,7 @@ class OnePassword:
                 return True
         return False
 
-    def get_items(self, result_fitler, filter_operator):
+    def get_items(self, result_fitler, filter_operator='AND'):
         items = []
         for item in self.storageService.list(self.accountService.get_available_accounts_id()):
             encrypted_item = Item(item)
