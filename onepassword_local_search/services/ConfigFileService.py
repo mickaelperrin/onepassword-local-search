@@ -19,7 +19,9 @@ class ConfigFileService:
             if not os_path.isfile(op_config_path):
                 raise ManagedException('The env varialbe ONEPASSWORD_CONFIG_FILE_PATH speciies a missing file for OnePassword CLI configuration')
         else:
-            op_config_path = os_path.join(os_environ.get('HOME'), '.op', 'config')
+            op_config_path = os_path.join(os_environ.get('HOME'), '.config','op', 'config')
+            if not os_path.isfile(op_config_path):
+                op_config_path = os_path.join(os_environ.get('HOME'), '.op', 'config')
         if not os_path.isfile(op_config_path):
             raise ManagedException('OnePassword CLI configuration is not present. Ensure you have run op signin')
         with open(op_config_path) as op_config_file:
