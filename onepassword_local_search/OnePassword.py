@@ -72,16 +72,18 @@ class OnePassword:
         for item in self.get_items(result_fitler, filter_operator):
             print(sf.format(list_format, item).strip())
 
-    def mapping(self, subcommand, use_lastpass_uuid=False):
+    def mapping(self, subcommand, use_lastpass_uuid=False, verbose=False):
         self.storageService.checks_for_uuid_mapping()
         if subcommand == 'list':
             self.mapping_list(use_lastpass_uuid)
         else:
-            return getattr(self, 'mapping_' + subcommand)()
+            return getattr(self, 'mapping_' + subcommand)(verbose)
 
-    def mapping_update(self):
+    def mapping_update(self, verbose=False):
         self.storageService.truncate_uuid_mapping_table()
         for item in self.storageService.list(self.accountService.get_available_accounts_id()):
+            if verbose:
+                print(item['uuid'])
             encrypted_item = Item(item)
             decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
             decrypted_item = decryptor.decrypt_item(encrypted_item)

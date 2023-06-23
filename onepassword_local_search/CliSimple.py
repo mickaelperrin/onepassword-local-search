@@ -39,6 +39,7 @@ class CliSimple:
         action_update_mapping = subparsers.add_parser('mapping', help='operations on uuid mapping')
         action_update_mapping.add_argument('subcommand', help='update or list', choices=['list', 'update'])
         action_update_mapping.add_argument('--use-lastpass-uuid', help='list using lastpass uuid', nargs='?', default=False, const=True)
+        action_update_mapping.add_argument('--verbose', help='more verbose output', nargs='?', default=False, const=True)
 
         self.args = parser.parse_args(args[1:])
 
@@ -80,7 +81,7 @@ class CliSimple:
         return self.onePassword.list(self.args.format, self.args.filter, self.args.filter_operator, result_encoding=self.args.output_encoding)
 
     def mapping(self):
-        return self.onePassword.mapping(self.args.subcommand, self.args.use_lastpass_uuid)
+        return self.onePassword.mapping(self.args.subcommand, self.args.use_lastpass_uuid, self.args.verbose)
 
     def version(self):
         return OnePassword.version()
