@@ -62,7 +62,7 @@ class OnePassword:
             encrypted_item = Item(item)
             decryptor = self.accountService.get_decryptor(encrypted_item.vaultId)
             decrypted_item = decryptor.decrypt_item(encrypted_item)
-            if self._text_matches_filter(decrypted_item.overview['title'], result_fitler, filter_operator):
+            if 'title' in decrypted_item.overview.keys() and self._text_matches_filter(decrypted_item.overview['title'], result_fitler, filter_operator):
                 items.append(decrypted_item)
         return items
 
